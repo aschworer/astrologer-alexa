@@ -19,6 +19,7 @@ import aschworer.astrologer.alexa.handler.responder.service.Cards;
 import aschworer.astrologer.alexa.handler.responder.service.NatalChartAlexaResponder;
 
 import java.util.HashMap;
+import java.util.ResourceBundle;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -40,12 +41,11 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     @Mock
     private Session session;
 
-
     @Before
     public void init() {
-        //set your keys here
-        System.setProperty("aws.accessKeyId", "");//todo use proper authentication
-        System.setProperty("aws.secretKey", "");
+        ResourceBundle config = ResourceBundle.getBundle("lambda");
+        System.setProperty("aws.accessKeyId", config.getString("aws.accessKeyId"));
+        System.setProperty("aws.secretKey", config.getString("aws.secretKey"));
     }
 
     @Test
