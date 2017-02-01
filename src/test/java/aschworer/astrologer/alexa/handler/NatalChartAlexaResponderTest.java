@@ -43,8 +43,9 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
 
     @Before
     public void init() {
-        System.setProperty("aws.accessKeyId", "AKIAJAPVCHE7ZA6TRTCQ");//todo remove
-        System.setProperty("aws.secretKey", "rG+B8FT/qhpt8MjCi0/SWtGi2qXssexcWZVz570B");
+        //set your keys here
+        System.setProperty("aws.accessKeyId", "");//todo use proper authentication
+        System.setProperty("aws.secretKey", "");
     }
 
     @Test
