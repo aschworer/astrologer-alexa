@@ -1,0 +1,56 @@
+{
+  "intents": [
+    {
+      "intent": "SunSignIntent"
+    },
+    {
+      "intent": "MoonSignIntent"
+    },
+    {
+      "intent": "NatalChartIntent"
+    },
+    {
+      "intent": "BirthDayIntent",
+      "slots": [
+        {
+          "name": "day",
+          "type": "AMAZON.DATE"
+        }
+      ]
+    },
+    {
+      "intent": "BirthYearIntent",
+      "slots": [
+        {
+          "name": "year",
+          "type": "AMAZON.NUMBER"
+        }
+      ]
+    },
+    {
+      "intent": "BirthTimeIntent",
+      "slots": [
+        {
+          "name": "time",
+          "type": "AMAZON.TIME"
+        }
+      ]
+    },
+    {
+      "intent": "ConfirmDateIntent"
+    },
+    {
+      "intent": "DenyDateIntent"
+    },
+
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}
