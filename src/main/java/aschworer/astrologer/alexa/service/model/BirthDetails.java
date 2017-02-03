@@ -1,5 +1,7 @@
 package aschworer.astrologer.alexa.service.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * @author aschworer
  */
@@ -51,5 +53,8 @@ public class BirthDetails {
         this.lat = lat;
     }
 
-
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this.getClass());
+    }
 }

@@ -28,6 +28,15 @@
       ]
     },
     {
+      "intent": "BirthPlaceIntent",
+      "slots": [
+        {
+          "name": "place",
+          "type": "AMAZON.Country"
+        }
+      ]
+    },
+    {
       "intent": "BirthTimeIntent",
       "slots": [
         {

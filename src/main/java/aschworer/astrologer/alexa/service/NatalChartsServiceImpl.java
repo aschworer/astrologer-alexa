@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author aschworer
@@ -24,25 +25,36 @@ public class NatalChartsServiceImpl implements NatalChartsService {
     private SwissEphemerisLambda swissEphLambdaFunction = new SwissEphemerisLambda();
 
     @Override
-    public Sign getPlanetSign(Planet planet, Date date) throws Exception {
-        return getNatalChartByDate(date).getSign(planet);
+    public Sign getPlanetSign(Planet planet, Date date, String lat, String lng) throws Exception {
+        return getNatalChart(date, lat, lng).getSign(planet);
     }
 
-    public NatalChart getNatalChartByDate(Date date) throws Exception {
+//    public NatalChart getNatalChartByDate(Date date) throws Exception {
+//        BirthDetails birthDetails = getDefaultBirthDetails();
+//        birthDetails.setDate(SwissEphemerisLambda.DATE_FORMAT.formatNoYear(date));
+//        birthDetails.setTime(SwissEphemerisLambda.TIME_FORMAT.formatNoYear(date));//todo timezone of birth place
+//        return getNatalChart(birthDetails);
+//    }
+
+    public NatalChart getNatalChart(Date date, String lat, String lng) throws Exception {
         BirthDetails birthDetails = getDefaultBirthDetails();
         birthDetails.setDate(SwissEphemerisLambda.DATE_FORMAT.format(date));
         birthDetails.setTime(SwissEphemerisLambda.TIME_FORMAT.format(date));//todo timezone of birth place
+        if (lng!=null){
+            birthDetails.setLng(lng.replace(".", ":"));
+        }
+        if (lat!=null) {
+            birthDetails.setLat(lat.replace(".", ":"));
+        }
+//        GeoLocation geoLocation = locationService.getFirstLocationByName(place);
+//        birthDetails.setLng(geoLocation.getLng());//TODO!!!!!!!!!!!!!! use
+//        birthDetails.setLat(geoLocation.getLat());
         return getNatalChart(birthDetails);
     }
 
-    public NatalChart getNatalChartByDateAndPlace(Date date, String place) throws Exception {
-        BirthDetails birthDetails = getDefaultBirthDetails();
-        birthDetails.setDate(SwissEphemerisLambda.DATE_FORMAT.format(date));
-        birthDetails.setTime(SwissEphemerisLambda.TIME_FORMAT.format(date));//todo timezone of birth place
-        GeoLocation geoLocation = locationService.getFirstLocationByName(place);
-        birthDetails.setLng(geoLocation.getLng());
-        birthDetails.setLat(geoLocation.getLat());
-        return getNatalChart(birthDetails);
+    @Override
+    public GeoLocation getCountryByName(String name) {
+        return locationService.getLocationsByName(name).get(0);
     }
 
     private BirthDetails getDefaultBirthDetails() {

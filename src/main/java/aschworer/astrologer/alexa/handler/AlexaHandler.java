@@ -13,9 +13,10 @@ public class AlexaHandler extends SpeechletRequestStreamHandler {
 
     static {
         /*
-         * Place relevant Ids here to make the skill work
+         * This Id can be found on https://developer.amazon.com/edw/home.html#/ "Edit" the relevant
+         * Alexa Skill and put the relevant Application Ids in this Set.
          */
-        supportedApplicationIds.add("");
+        supportedApplicationIds.add("amzn1.ask.skill.40b6b5c2-9cdd-4613-80d1-dbaecb7413d0");
     }
 
     public AlexaHandler() {

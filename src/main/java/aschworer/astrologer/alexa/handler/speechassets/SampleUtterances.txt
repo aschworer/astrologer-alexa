@@ -1,6 +1,12 @@
-AMAZON.StopIntent stop
-AMAZON.StopIntent thanks
-AMAZON.StopIntent no thank you
+BirthPlaceIntent born in {place}
+BirthPlaceIntent in {place}
+BirthPlaceIntent the country of birth is {place}
+
+BirthDayIntent {day}
+BirthDayIntent on {day}
+
+BirthYearIntent year is {year}
+BirthYearIntent {year}
 
 SunSignIntent give me a sun sign
 SunSignIntent get me a sun sign
@@ -12,15 +18,7 @@ MoonSignIntent tell me a Moon sign
 MoonSignIntent get Moon sign
 MoonSignIntent Moon sign
 
-NatalChartIntent get me a chart
-NatalChartIntent train date
-NatalChartIntent natal chart
-
-BirthDayIntent {day}
-BirthDayIntent on {day}
-
-BirthYearIntent year is {year}
-BirthYearIntent {year}
+NatalChartIntent chart
 
 ConfirmDateIntent yes
 ConfirmDateIntent yeah
@@ -28,7 +26,12 @@ ConfirmDateIntent yeah
 DenyDateIntent no
 DenyDateIntent nope
 
+
 BirthTimeIntent the time of birth is {time}
 BirthTimeIntent time is {time}
 BirthTimeIntent was born at {time}
 BirthTimeIntent born at {time}
+
+AMAZON.StopIntent stop
+AMAZON.StopIntent thanks
+AMAZON.StopIntent no thank you

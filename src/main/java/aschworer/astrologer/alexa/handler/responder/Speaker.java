@@ -1,16 +1,18 @@
 package aschworer.astrologer.alexa.handler.responder;
 
+import aschworer.astrologer.alexa.service.model.CharacteristicInSign;
+import aschworer.astrologer.alexa.service.model.NatalChart;
+import aschworer.astrologer.alexa.service.model.Planet;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
 import com.amazon.speech.ui.SsmlOutputSpeech;
-import aschworer.astrologer.alexa.service.model.CharacteristicInSign;
-import aschworer.astrologer.alexa.service.model.NatalChart;
-import aschworer.astrologer.alexa.service.model.Planet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 /**
@@ -19,6 +21,15 @@ import java.util.ResourceBundle;
 public abstract class Speaker {
 
     private static final Logger log = LoggerFactory.getLogger(StandardAlexaResponder.class);
+    static String[] suffixes =
+            //    0     1     2     3     4     5     6     7     8     9
+            {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
+                    //    10    11    12    13    14    15    16    17    18    19
+                    "th", "th", "th", "th", "th", "th", "th", "th", "th", "th",
+                    //    20    21    22    23    24    25    26    27    28    29
+                    "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
+                    //    30    31
+                    "th", "st"};
     private ResourceBundle messages = ResourceBundle.getBundle("messages");
 
     protected SpeechletResponse ask(String cardName, String... args) {
@@ -52,8 +63,10 @@ public abstract class Speaker {
     protected String getNatalChartAsString(NatalChart natalChart) {
         StringBuilder natalChartSpeech = new StringBuilder();
         for (CharacteristicInSign planetInSign : natalChart.getPlanets()) {
-            if (planetInSign.getCharacteristic().equals(Planet.SUN.getString()) || planetInSign.getCharacteristic().equals(Planet.MOON.getString()))
+            if (planetInSign.getCharacteristic().equalsIgnoreCase(Planet.SUN.getString()) ||
+                    planetInSign.getCharacteristic().equalsIgnoreCase(Planet.MOON.getString())) {
                 natalChartSpeech.append("The ");
+            }
             natalChartSpeech.append(planetInSign.getCharacteristic());
             natalChartSpeech.append(" is in ");
             natalChartSpeech.append(planetInSign.getSign());
@@ -61,4 +74,20 @@ public abstract class Speaker {
         }
         return natalChartSpeech.toString();
     }
+
+    protected String formatNoYear(String date) {
+        try {
+            return new SimpleDateFormat("dd MMMM").format(new SimpleDateFormat("yyyy-MM-dd").parse(date));
+        } catch (Exception e) {
+            log.error("Date re-formatNoYear parse exception: " + date);
+            return null;
+        }
+    }
+
+    //input - dd MMMM
+    private String formatDay(String dateStr) throws ParseException {
+        final String day = dateStr.substring(0, 2);
+        return day + suffixes[Integer.parseInt(day)] + dateStr.substring(3, dateStr.length());
+    }
+
 }

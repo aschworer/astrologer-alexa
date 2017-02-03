@@ -16,4 +16,5 @@ public interface Cards {
     String SPEAK_NATAL_CHART = "NatalChart";
     String TELL_ME_BIRTH_YEAR = "TellMeBirthYear";
     String DOUBLE_CHECK_DATE = "DoubleCheckDate";
+    java.lang.String SELECT_PLACE = "SelectPlace";
 }
