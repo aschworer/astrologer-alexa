@@ -122,14 +122,14 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 //                if (time == null) {
 //                    return askForBirthTime();
 //                } else
-                if (lat == null || lng == null) {
-                    return askForBirthPlace();
-                }//todo
+//                if (lat == null || lng == null) {
+//                    return askForBirthPlace();
+//                }//todo
                 return astrologer.respondToMoonSign(date, place, lat, lng);
             case NATAL_CHART_INTENT:
-                if (lat == null || lng == null) {
-                    return askForBirthPlace();
-                }
+//                if (lat == null || lng == null) {
+//                    return askForBirthPlace();
+//                }
                 // else if (time == null) {
                 // return askForBirthTime();
                 // }
@@ -192,13 +192,13 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         return ask(TELL_ME_BIRTH_DAY);
     }
 
-    private SpeechletResponse askForBirthTime() {
-        return ask(TELL_ME_BIRTH_TIME);
-    }
+//    private SpeechletResponse askForBirthTime() {
+//        return ask(TELL_ME_BIRTH_TIME);
+//    }
 
-    private SpeechletResponse askForBirthPlace() {
-        return ask(TELL_ME_BIRTH_PLACE);
-    }
+//    private SpeechletResponse askForBirthPlace() {
+//        return ask(TELL_ME_BIRTH_PLACE);
+//    }
 
     private void setInitialIntent(Session session, String name) {
         session.setAttribute(INITIAL_INTENT, name);

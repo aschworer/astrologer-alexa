@@ -7,11 +7,12 @@ import com.google.gson.annotations.SerializedName;
  */
 public enum House implements Characteristic {
     @SerializedName("Ascendant")
-    I("Ascendant"),
-    II("II"), III("III"), IV("IV"), V("V"), VI("VI"), VII("VII"), VIII("VIII"), IX("IX"),
+    I("House1"),
+    II("House2"), III("House3"), IV("House4"), V("House5"), VI("House6"), VII("House7"), VIII("House8"), IX("House9"),
     @SerializedName("Midheaven")
-    X("Midheaven"),
-    XI("XI"), XII("XII");
+//    X("Midheaven"),
+    X("House10"),
+    XI("House11"), XII("House12");
 
     private String string;
 

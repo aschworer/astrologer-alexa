@@ -1,8 +1,11 @@
 package aschworer.astrologer.alexa.handler.responder;
 
+import aschworer.astrologer.alexa.service.model.Characteristic;
 import aschworer.astrologer.alexa.service.model.CharacteristicInSign;
+import aschworer.astrologer.alexa.service.model.House;
 import aschworer.astrologer.alexa.service.model.NatalChart;
 import aschworer.astrologer.alexa.service.model.Planet;
+import aschworer.astrologer.alexa.service.model.Sign;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
@@ -61,16 +64,34 @@ public abstract class Speaker {
     }
 
     protected String getNatalChartAsString(NatalChart natalChart) {
+        StringBuilder variations = new StringBuilder();
         StringBuilder natalChartSpeech = new StringBuilder();
         for (CharacteristicInSign planetInSign : natalChart.getPlanets()) {
-            if (planetInSign.getCharacteristic().equalsIgnoreCase(Planet.SUN.getString()) ||
-                    planetInSign.getCharacteristic().equalsIgnoreCase(Planet.MOON.getString())) {
-                natalChartSpeech.append("The ");
+
+            String characteristic = planetInSign.getCharacteristic();
+            if (House.getByString(characteristic) != null) {//todo skip houses for now
+                continue;
             }
-            natalChartSpeech.append(planetInSign.getCharacteristic());
-            natalChartSpeech.append(" is in ");
-            natalChartSpeech.append(planetInSign.getSign());
-            natalChartSpeech.append("; ");
+            final Characteristic byString = Planet.getByString(characteristic);
+            if (byString != null) {
+                characteristic = byString.getString();
+            }
+
+            if (Sign.VARY.toString().equalsIgnoreCase(planetInSign.getSign())) {
+                variations.append(characteristic).append("; ");
+            } else {
+                if (characteristic.equalsIgnoreCase(Planet.SUN.getString()) ||
+                        characteristic.equalsIgnoreCase(Planet.MOON.getString())) {
+                    natalChartSpeech.append("The ");
+                }
+                natalChartSpeech.append(characteristic);
+                natalChartSpeech.append(" is in ");
+                natalChartSpeech.append(planetInSign.getSign());
+                natalChartSpeech.append("; ");
+            }
+        }
+        if (variations.length() != 0) {
+            natalChartSpeech.append("Please note, that signs of some planets, including ").append(variations).append(" may vary depending to the place and time of birth.");
         }
         return natalChartSpeech.toString();
     }

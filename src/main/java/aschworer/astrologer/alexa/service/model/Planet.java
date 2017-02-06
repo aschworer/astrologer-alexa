@@ -11,6 +11,7 @@ public enum Planet implements Characteristic {
     JUPITER("Jupiter"), SATURN("Saturn"), URANUS("Uranus"), NEPTUNE("Neptune"),
     PLUTO("Pluto"), CHIRON("Chiron"), /*ASCENDANT("Ascendant"), MIDHEAVEN("Midheaven"),*/
     LILITH("Lilith"),
+    ASC("Asc"),//todo not a planet
     @SerializedName("Asc node")
     ASC_NODE("Asc node");
 
@@ -31,11 +32,12 @@ public enum Planet implements Characteristic {
 
     @Override
     public String toString() {
+        if (this == ASC) return "Ascendant";
         return string;
     }
 
     public String getString() {
-        return string;
+        return toString();
     }
 
 }

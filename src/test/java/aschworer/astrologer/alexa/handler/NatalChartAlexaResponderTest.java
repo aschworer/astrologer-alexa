@@ -158,6 +158,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
 
 
     @Test
+    @Ignore
     public void testNatalChartSuccessBirthPlaceRequired() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.NATAL_CHART_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
@@ -183,6 +184,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    @Ignore
     public void test_MoonSignSuccessBirthPlaceRequired() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.MOON_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
@@ -247,7 +249,8 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
                 containsString(Sign.SAGITTARIUS.toString().toLowerCase()),
                 containsString(Sign.SCORPIO.toString().toLowerCase()),
                 containsString(Sign.TAURUS.toString().toLowerCase()),
-                containsString(Sign.VIRGO.toString().toLowerCase())
+                containsString(Sign.VIRGO.toString().toLowerCase()),
+                containsString(Sign.VARY.toString().toLowerCase())
         ));
     }
 

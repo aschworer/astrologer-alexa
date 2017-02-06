@@ -39,13 +39,15 @@ public class NatalChartsServiceImpl implements NatalChartsService {
     public NatalChart getNatalChart(Date date, String lat, String lng) throws Exception {
         BirthDetails birthDetails = getDefaultBirthDetails();
         birthDetails.setDate(SwissEphemerisLambda.DATE_FORMAT.format(date));
-        birthDetails.setTime(SwissEphemerisLambda.TIME_FORMAT.format(date));//todo timezone of birth place
+//        if ()birthDetails.setTime(SwissEphemerisLambda.TIME_FORMAT.format(date));//todo timezone of birth place
         if (lng!=null){
-            birthDetails.setLng(lng.replace(".", ":"));
+            birthDetails.setLng(lng);
         }
         if (lat!=null) {
-            birthDetails.setLat(lat.replace(".", ":"));
+            birthDetails.setLat(lat);
         }
+        //todo - get timezone
+        //todo - if time is present, get timezone from google
 //        GeoLocation geoLocation = locationService.getFirstLocationByName(place);
 //        birthDetails.setLng(geoLocation.getLng());//TODO!!!!!!!!!!!!!! use
 //        birthDetails.setLat(geoLocation.getLat());
@@ -60,9 +62,9 @@ public class NatalChartsServiceImpl implements NatalChartsService {
     private BirthDetails getDefaultBirthDetails() {
         BirthDetails birthDetails = new BirthDetails();
 //        birthDetails.setTime("00:00");//todo -
-        birthDetails.setTimezone("+00:00");
-        birthDetails.setLat("00:00");//todo - fix this on lambda side
-        birthDetails.setLng("00:00");
+//        birthDetails.setTimezone("+00:00");
+//        birthDetails.setLat("00:00");//todo - fix this on lambda side
+//        birthDetails.setLng("00:00");
         return birthDetails;
     }
 
