@@ -1,11 +1,11 @@
 package aschworer.astrologer.alexa.handler.responder;
 
-import aschworer.astrologer.alexa.service.model.Characteristic;
-import aschworer.astrologer.alexa.service.model.CharacteristicInSign;
-import aschworer.astrologer.alexa.service.model.House;
-import aschworer.astrologer.alexa.service.model.NatalChart;
-import aschworer.astrologer.alexa.service.model.Planet;
-import aschworer.astrologer.alexa.service.model.Sign;
+import aschworer.astrologer.model.Characteristic;
+import aschworer.astrologer.model.CharacteristicInSign;
+import aschworer.astrologer.model.House;
+import aschworer.astrologer.model.NatalChart;
+import aschworer.astrologer.model.Planet;
+import aschworer.astrologer.model.Sign;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
@@ -66,27 +66,28 @@ public abstract class Speaker {
     protected String getNatalChartAsString(NatalChart natalChart) {
         StringBuilder variations = new StringBuilder();
         StringBuilder natalChartSpeech = new StringBuilder();
-        for (CharacteristicInSign planetInSign : natalChart.getPlanets()) {
+        for (CharacteristicInSign planetInSign : natalChart.getCharacteristicsInSigns()) {
 
-            String characteristic = planetInSign.getCharacteristic();
-            if (House.getByString(characteristic) != null) {//todo skip houses for now
-                continue;
-            }
-            final Characteristic byString = Planet.getByString(characteristic);
-            if (byString != null) {
-                characteristic = byString.getString();
-            }
-
-            if (Sign.VARY.toString().equalsIgnoreCase(planetInSign.getSign())) {
+//            String characteristic = planetInSign.getCharacteristic();
+//            if (House.getByString(characteristic) != null) {//todo skip houses for now
+//                continue;
+//            }
+//            final Characteristic byString = Planet.getByString(characteristic);
+//            if (byString != null) {
+//                characteristic = byString.getString();
+//            }
+//
+            Characteristic characteristic = planetInSign.getCharacteristic();
+            if (planetInSign.getSigns().length > 1) {//todo - ?
                 variations.append(characteristic).append("; ");
             } else {
-                if (characteristic.equalsIgnoreCase(Planet.SUN.getString()) ||
-                        characteristic.equalsIgnoreCase(Planet.MOON.getString())) {
+                if (characteristic.equals(Planet.SUN) ||
+                        characteristic.equals(Planet.MOON)) {
                     natalChartSpeech.append("The ");
                 }
-                natalChartSpeech.append(characteristic);
+                natalChartSpeech.append(characteristic.getString());
                 natalChartSpeech.append(" is in ");
-                natalChartSpeech.append(planetInSign.getSign());
+                natalChartSpeech.append(planetInSign.toSignRange());
                 natalChartSpeech.append("; ");
             }
         }

@@ -1,6 +1,7 @@
 package aschworer.astrologer.alexa.handler.responder.service;
 
 import aschworer.astrologer.alexa.handler.responder.StandardAlexaResponder;
+import aschworer.astrologer.alexa.service.GeocodeLocationService;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.slu.Slot;
 import com.amazon.speech.speechlet.Session;
@@ -33,6 +34,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 
     private static final Logger log = LoggerFactory.getLogger(NatalChartAlexaResponder.class);
     private Astrologer astrologer = new Astrologer();
+    private GeocodeLocationService locationService = new GeocodeLocationService();
 
     @Override
     public SpeechletResponse respondToCustomIntent(Intent intent, Session session) throws SpeechletException {
@@ -149,7 +151,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         final String place = slot.getValue();
         log.debug(slot.getValue());
         session.setAttribute(BIRTH_PLACE, place);
-        Map<String, String> coordinates = astrologer.getCountryCoordinates(place);
+        Map<String, String> coordinates = locationService.getCountryCoordinates(place);
         session.setAttribute(BIRTH_LAT, coordinates.get("lat"));
         session.setAttribute(BIRTH_LNG, coordinates.get("lng"));
 //        session.setAttribute(BIRTH_PLACE_FULLNAME, coordinates.get("fullname"));

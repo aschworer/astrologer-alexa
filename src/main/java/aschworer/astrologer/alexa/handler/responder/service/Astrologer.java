@@ -1,17 +1,16 @@
 package aschworer.astrologer.alexa.handler.responder.service;
 
 import aschworer.astrologer.alexa.handler.responder.Speaker;
+import aschworer.astrologer.alexa.service.LambdaChartsService;
 import aschworer.astrologer.alexa.service.MockAlexaNatalChartsService;
-import aschworer.astrologer.alexa.service.NatalChartsServiceImpl;
-import aschworer.astrologer.alexa.service.model.GeoLocation;
-import aschworer.astrologer.alexa.service.model.Planet;
+import aschworer.astrologer.model.Planet;
 import com.amazon.speech.speechlet.SpeechletResponse;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -19,7 +18,9 @@ import java.util.ResourceBundle;
  */
 public class Astrologer extends Speaker {
 
-    private static final SimpleDateFormat ALEXA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat ALEXA_DATE_FORMAT_SIMPLE_DF = new SimpleDateFormat("yyyy-MM-dd");
+    public static final String ALEXA_DATE_FORMAT = "yyyy-MM-dd";
+
     private NatalChartsService service;
 
     public Astrologer() {
@@ -27,13 +28,13 @@ public class Astrologer extends Speaker {
         if (Boolean.valueOf(config.getString("mock"))) {
             service = new MockAlexaNatalChartsService();
         } else {
-            service = new NatalChartsServiceImpl();
+            service = new LambdaChartsService();
         }
     }
 
     SpeechletResponse respondToSunSign(String date, String placeFullName, String lat, String lng) {
         try {
-            Date parsedDate = ALEXA_DATE_FORMAT.parse(date);
+            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
             String placeOfBirth = "";
             if (lat != null && lng != null) {
                 placeOfBirth = placeOfBirth + " born in " + placeFullName;
@@ -53,7 +54,7 @@ public class Astrologer extends Speaker {
 
     SpeechletResponse respondWithNatalChart(String date, String placeFullName, String lat, String lng) {
         try {
-            Date parsedDate = ALEXA_DATE_FORMAT.parse(date);
+            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
             String placeOfBirth = "";
             if (lat != null && lng != null) {
                 placeOfBirth = placeOfBirth + " in " + placeFullName;
@@ -68,7 +69,7 @@ public class Astrologer extends Speaker {
 
     private SpeechletResponse respondToPlanetSign(Planet planet, String date, String placeFullName, String lat, String lng) {
         try {
-            Date parsedDate = ALEXA_DATE_FORMAT.parse(date);
+            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
             String placeOfBirth = "";
             if (lat != null && lng != null) {
                 placeOfBirth = placeOfBirth + " born in " + placeFullName;
@@ -81,19 +82,7 @@ public class Astrologer extends Speaker {
         }
     }
 
-    public Map<String, String> getCountryCoordinates(String place) {
-        HashMap<String, String> coordinates = new HashMap<>();
-        try {
-            final GeoLocation countryLocation = service.getCountryByName(place);
-            coordinates.put("lat", countryLocation.getLat());
-            coordinates.put("lng", countryLocation.getLng());
-            coordinates.put("fullname", countryLocation.getFullName());
-            return coordinates;
-        } catch (Exception e) {
-            //todo
-            return null;
-        }
-    }
+
 
 //    SpeechletResponse getLocationsByName(String name) {
 //        try {

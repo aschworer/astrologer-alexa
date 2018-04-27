@@ -3,7 +3,7 @@ package aschworer.astrologer.alexa.handler;
 import aschworer.astrologer.alexa.handler.responder.service.Cards;
 import aschworer.astrologer.alexa.handler.responder.service.NatalChartAlexaResponder;
 import aschworer.astrologer.alexa.handler.responder.service.NatalChartIntent;
-import aschworer.astrologer.alexa.service.model.Sign;
+import aschworer.astrologer.model.Sign;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.slu.Slot;
 import com.amazon.speech.speechlet.Session;
@@ -249,8 +249,8 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
                 containsString(Sign.SAGITTARIUS.toString().toLowerCase()),
                 containsString(Sign.SCORPIO.toString().toLowerCase()),
                 containsString(Sign.TAURUS.toString().toLowerCase()),
-                containsString(Sign.VIRGO.toString().toLowerCase()),
-                containsString(Sign.VARY.toString().toLowerCase())
+                containsString(Sign.VIRGO.toString().toLowerCase())
+//                containsString(Sign.VARY.toString().toLowerCase())
         ));
     }
 
