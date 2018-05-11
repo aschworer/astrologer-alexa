@@ -1,11 +1,6 @@
 package aschworer.astrologer.alexa.handler.responder;
 
-import aschworer.astrologer.model.Characteristic;
-import aschworer.astrologer.model.CharacteristicInSign;
-import aschworer.astrologer.model.House;
-import aschworer.astrologer.model.NatalChart;
-import aschworer.astrologer.model.Planet;
-import aschworer.astrologer.model.Sign;
+import aschworer.astrologer.model.*;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import com.amazon.speech.ui.Reprompt;
 import com.amazon.speech.ui.SimpleCard;
@@ -64,22 +59,12 @@ public abstract class Speaker {
     }
 
     protected String getNatalChartAsString(NatalChart natalChart) {
-        StringBuilder variations = new StringBuilder();
+        StringBuilder planetWithMultipleSigns = new StringBuilder();
         StringBuilder natalChartSpeech = new StringBuilder();
         for (CharacteristicInSign planetInSign : natalChart.getCharacteristicsInSigns()) {
-
-//            String characteristic = planetInSign.getCharacteristic();
-//            if (House.getByString(characteristic) != null) {//todo skip houses for now
-//                continue;
-//            }
-//            final Characteristic byString = Planet.getByString(characteristic);
-//            if (byString != null) {
-//                characteristic = byString.getString();
-//            }
-//
             Characteristic characteristic = planetInSign.getCharacteristic();
-            if (planetInSign.getSigns().length > 1) {//todo - ?
-                variations.append(characteristic).append("; ");
+            if (planetInSign.getSigns().length > 1) {
+                if (!(characteristic instanceof House)) planetWithMultipleSigns.append(characteristic.getString()).append(", ");
             } else {
                 if (characteristic.equals(Planet.SUN) ||
                         characteristic.equals(Planet.MOON)) {
@@ -88,11 +73,14 @@ public abstract class Speaker {
                 natalChartSpeech.append(characteristic.getString());
                 natalChartSpeech.append(" is in ");
                 natalChartSpeech.append(planetInSign.toSignRange());
-                natalChartSpeech.append("; ");
+                natalChartSpeech.append(". ");
             }
         }
-        if (variations.length() != 0) {
-            natalChartSpeech.append("Please note, that signs of some planets, including ").append(variations).append(" may vary depending to the place and time of birth.");
+        if (planetWithMultipleSigns.length() > 0) {
+            natalChartSpeech.append(" Planets that are not mentioned might require more information, like the time and place of birth. ")
+                    .append("Those include ")
+                    .append(planetWithMultipleSigns)
+                    .append(", Ascendant, Midheaven and other Houses");
         }
         return natalChartSpeech.toString();
     }

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author aschworer
  */
-public class MockAlexaNatalChartsService extends LambdaChartsService {
+public class MockAlexaNatalChartsService extends ChartsService {
 
     public NatalChart getNatalChart(Date date, String lat, String lng) throws Exception {
         return new NatalChart(getPeopleCharts());

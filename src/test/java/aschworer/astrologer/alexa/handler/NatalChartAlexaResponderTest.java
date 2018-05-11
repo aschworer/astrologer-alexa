@@ -18,6 +18,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -35,6 +37,7 @@ import static org.junit.Assert.assertThat;
 public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
 
     private NatalChartAlexaResponder natalChartAlexaResponder = new NatalChartAlexaResponder();
+    public static final String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
 
     @Mock
     private Session session;
@@ -47,6 +50,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //no lambda involved
     public void testNatalChartIntent() throws Exception {
         final SpeechletResponse speechletResponse = natalChartAlexaResponder.respondToIntent(buildIntent(NatalChartIntent.NATAL_CHART_INTENT.getName()), session);
         assertEquals(Cards.TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
@@ -55,6 +59,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //no lambda involved
     public void testMoonSignIntent() throws Exception {
         final SpeechletResponse speechletResponse = natalChartAlexaResponder.respondToIntent(buildIntent(NatalChartIntent.MOON_SIGN_INTENT.getName()), session);
         assertEquals(Cards.TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
@@ -63,6 +68,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //no lambda involved
     public void testSunSignIntent() throws Exception {
         final SpeechletResponse speechletResponse = natalChartAlexaResponder.respondToIntent(buildIntent(NatalChartIntent.SUN_SIGN_INTENT.getName()), session);
         assertEquals(Cards.TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
@@ -71,6 +77,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //no lambda involved - double check date - todo!!!
     public void testBirthDateIntent() throws Exception {
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
         final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(buildIntentWithSlots(NatalChartIntent.BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", "1985-11-20")), session);
@@ -80,15 +87,29 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    public void testBirthDateOnSunSignIntentYearMissing() throws Exception {
+        String date = CURRENT_YEAR + "-11-20";
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.SUN_SIGN_INTENT.getName());
+        final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(buildIntentWithSlots(NatalChartIntent.BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
+        Mockito.verify(session).setAttribute(BIRTH_DATE, date);
+        assertEquals(Cards.DOUBLE_CHECK_DATE, response.getCard().getTitle());
+        assertFalse(response.getShouldEndSession());
+    }
+
+    @Test
+    //no lambda involved
     public void testBirthDateIntentYearMissing() throws Exception {
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("2017-11-20");
-        final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(buildIntentWithSlots(NatalChartIntent.BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", "2017-11-20")), session);
-        Mockito.verify(session).setAttribute(BIRTH_DATE, "2017-11-20");
+        String date = CURRENT_YEAR + "-11-20";
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
+        final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(buildIntentWithSlots(NatalChartIntent.BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
+        Mockito.verify(session).setAttribute(BIRTH_DATE, date);
         assertEquals(Cards.TELL_ME_BIRTH_YEAR, response.getCard().getTitle());
         assertFalse(response.getShouldEndSession());
     }
 
     @Test
+    //no lambda involved
     public void testDenyDateIntent() throws Exception {
         final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(Intent.builder().withName(NatalChartIntent.DENY_DATE_INTENT.getName()).build(), session);
         assertEquals(Cards.TELL_ME_BIRTH_DAY, response.getCard().getTitle());
@@ -96,6 +117,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //no lambda involved
     public void testBirthYearIntent() throws Exception {
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("2015-11-20");
         final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(buildIntentWithSlots(NatalChartIntent.BIRTH_YEAR_INTENT.getName(), buildSlotsMap("year", "1986")), session);
@@ -105,6 +127,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
+    //lambda involved
     public void testConfirmBirthDateIntent_OnSunSign_Success() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1985-11-29");
@@ -112,10 +135,12 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
         assertEquals(Cards.SPEAK_PLANET_SIGN, response.getCard().getTitle());
         assertTrue(response.getShouldEndSession());
         assertResponseMentionSigns(response);
+        assertTrue(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("29"));
         assertFalse(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("1985"));
     }
 
     @Test
+    //lambda involved
     public void testConfirmBirthDateIntent_OnSunSign_NoYear() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn(CURRENT_YEAR + "-11-29");
@@ -123,7 +148,23 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
         assertEquals(Cards.SPEAK_PLANET_SIGN, response.getCard().getTitle());
         assertTrue(response.getShouldEndSession());
         assertResponseMentionSigns(response);
+        assertTrue(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("29"));
         assertFalse(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains(CURRENT_YEAR));
+    }
+
+    @Test
+    //lambda involved
+    public void testNatalChartSuccess() throws Exception {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.NATAL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
+        Mockito.when(session.getAttribute("place")).thenReturn("some place");
+        Mockito.when(session.getAttribute("lat")).thenReturn("+33.33");
+        Mockito.when(session.getAttribute("lng")).thenReturn("-33.33");
+        final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(Intent.builder().withName(NatalChartIntent.CONFIRM_DATE_INTENT.getName()).build(), session);
+        assertEquals(Cards.SPEAK_NATAL_CHART, response.getCard().getTitle());
+        assertTrue(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("house "));
+        assertTrue(response.getShouldEndSession());
+        assertResponseMentionSigns(response);
     }
 
     @Test
@@ -144,21 +185,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     }
 
     @Test
-    public void testNatalChartSuccess() throws Exception {
-        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.NATAL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
-        Mockito.when(session.getAttribute("place")).thenReturn("some place");
-        Mockito.when(session.getAttribute("lat")).thenReturn("+33.33");
-        Mockito.when(session.getAttribute("lng")).thenReturn("-33.33");
-        final SpeechletResponse response = natalChartAlexaResponder.respondToIntent(Intent.builder().withName(NatalChartIntent.CONFIRM_DATE_INTENT.getName()).build(), session);
-        assertEquals(Cards.SPEAK_NATAL_CHART, response.getCard().getTitle());
-        assertTrue(response.getShouldEndSession());
-        assertResponseMentionSigns(response);
-    }
-
-
-    @Test
-    @Ignore
+    @Ignore // todo  ?
     public void testNatalChartSuccessBirthPlaceRequired() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(NatalChartIntent.NATAL_CHART_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
