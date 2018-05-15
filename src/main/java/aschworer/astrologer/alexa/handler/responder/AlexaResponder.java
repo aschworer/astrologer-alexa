@@ -2,7 +2,6 @@ package aschworer.astrologer.alexa.handler.responder;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.Session;
-import com.amazon.speech.speechlet.SpeechletException;
 import com.amazon.speech.speechlet.SpeechletResponse;
 
 /**
@@ -10,14 +9,14 @@ import com.amazon.speech.speechlet.SpeechletResponse;
  */
 public interface AlexaResponder {
 
-    SpeechletResponse greet() throws SpeechletException;
+    SpeechletResponse greet();
 
-    SpeechletResponse respondToIntent(Intent intent, Session session) throws SpeechletException;
+    SpeechletResponse respondToIntent(Intent intent, Session session);
 
-    SpeechletResponse help() throws SpeechletException;
+    SpeechletResponse help();
 
-    SpeechletResponse stop() throws SpeechletException;
+    SpeechletResponse stop();
 
-    SpeechletResponse cancel() throws SpeechletException;
+    SpeechletResponse cancel();
 
 }

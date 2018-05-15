@@ -2,7 +2,6 @@ package aschworer.astrologer.alexa.handler.responder;
 
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.Session;
-import com.amazon.speech.speechlet.SpeechletException;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import aschworer.astrologer.alexa.handler.responder.service.Cards;
 
@@ -12,7 +11,7 @@ import aschworer.astrologer.alexa.handler.responder.service.Cards;
 public abstract class StandardAlexaResponder extends Speaker implements AlexaResponder {
 
     @Override
-    public SpeechletResponse respondToIntent(Intent intent, Session session) throws SpeechletException {
+    public SpeechletResponse respondToIntent(Intent intent, Session session) {
         switch (AlexaIntent.getByName(intent.getName())) {
             case AMAZON_HELP_INTENT:
                 return help();
@@ -25,7 +24,7 @@ public abstract class StandardAlexaResponder extends Speaker implements AlexaRes
         }
     }
 
-    public abstract SpeechletResponse respondToCustomIntent(Intent intent, Session session) throws SpeechletException;
+    public abstract SpeechletResponse respondToCustomIntent(Intent intent, Session session);
 
     @Override
     public SpeechletResponse greet() {

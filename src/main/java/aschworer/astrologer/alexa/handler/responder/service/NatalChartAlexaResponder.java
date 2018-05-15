@@ -5,7 +5,6 @@ import aschworer.astrologer.alexa.service.GeocodeLocationService;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.slu.Slot;
 import com.amazon.speech.speechlet.Session;
-import com.amazon.speech.speechlet.SpeechletException;
 import com.amazon.speech.speechlet.SpeechletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
     private GeocodeLocationService locationService = new GeocodeLocationService();
 
     @Override
-    public SpeechletResponse respondToCustomIntent(Intent intent, Session session) throws SpeechletException {
+    public SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
         log.info(intent.getName());
         switch (NatalChartIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
@@ -67,7 +66,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 //            case CONFIRM_BIRTH_PLACE_INTENT:
 //                return respondToBirthPlaceConfirmation(session);
             case NA:
-                throw new SpeechletException("Invalid NatalChartIntent");
+                return ask("NatalChartError");
             default:
                 return help();
         }

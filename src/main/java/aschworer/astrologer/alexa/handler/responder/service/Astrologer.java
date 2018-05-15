@@ -46,7 +46,7 @@ public class Astrologer extends Speaker {
         } catch (ParseException e) {
             return ask("InvalidDate");
         } catch (Exception e) {
-            return ask("NatalChartError");
+            return ask("NatalChartimport aschworer.astrologer.model.");
         }
     }
     SpeechletResponse respondToMoonSign(String date, String placeFullName, String lat, String lng) {
