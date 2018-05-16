@@ -3,7 +3,7 @@ package aschworer.astrologer.alexa.handler.responder;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletResponse;
-import aschworer.astrologer.alexa.handler.responder.service.Cards;
+import aschworer.astrologer.alexa.handler.responder.charts.SpokenCards;
 
 /**
  * @author aschworer
@@ -28,20 +28,20 @@ public abstract class StandardAlexaResponder extends Speaker implements AlexaRes
 
     @Override
     public SpeechletResponse greet() {
-        return ask(Cards.WELCOME);
+        return ask(SpokenCards.WELCOME);
     }
 
     @Override
     public SpeechletResponse help() {
-        return ask(Cards.HELP);
+        return ask(SpokenCards.HELP);
     }
 
     @Override
-    public SpeechletResponse stop() {return speakAndFinish(Cards.STOP);}
+    public SpeechletResponse stop() {return speakAndFinish(SpokenCards.STOP);}
 
     @Override
     public SpeechletResponse cancel() {
-        return speakAndFinish(Cards.CANCEL);
+        return speakAndFinish(SpokenCards.CANCEL);
     }
 
 }

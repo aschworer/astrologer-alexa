@@ -1,4 +1,4 @@
-package aschworer.astrologer.alexa.handler.responder.service;
+package aschworer.astrologer.alexa.handler.responder.charts;
 
 import aschworer.astrologer.alexa.handler.responder.*;
 import aschworer.astrologer.alexa.service.*;
@@ -8,8 +8,8 @@ import org.slf4j.*;
 
 import java.util.*;
 
-import static aschworer.astrologer.alexa.handler.responder.service.Cards.*;
-import static aschworer.astrologer.alexa.handler.responder.service.SessionConstants.*;
+import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
+import static aschworer.astrologer.alexa.handler.responder.charts.SessionConstants.*;
 
 /**
  * @author aschworer
@@ -30,8 +30,8 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
             case MOON_SIGN_INTENT:
                 setInitialIntent(session, AstrologerIntent.MOON_SIGN_INTENT.getName());
                 return askForBirthDate();
-            case NATAL_CHART_INTENT:
-                setInitialIntent(session, AstrologerIntent.NATAL_CHART_INTENT.getName());
+            case FULL_CHART_INTENT:
+                setInitialIntent(session, AstrologerIntent.FULL_CHART_INTENT.getName());
                 return askForBirthDate();
             case BIRTH_DAY_INTENT:
                 return respondToBirthDay(intent, session);
@@ -112,7 +112,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 //                    return askForBirthPlace();
 //                }//todo
                 return astrologer.respondToMoonSign(date, place, lat, lng);
-            case NATAL_CHART_INTENT:
+            case FULL_CHART_INTENT:
 //                if (lat == null || lng == null) {
 //                    return askForBirthPlace();
 //                }
@@ -158,7 +158,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
             case MOON_SIGN_INTENT:
                 //get a date from session
                 return astrologer.respondToMoonSign(slot.getValue());
-            case NATAL_CHART_INTENT:
+            case FULL_CHART_INTENT:
                 //get a date from session
                 return astrologer.respondWithNatalChart(slot.getValue());
             default:

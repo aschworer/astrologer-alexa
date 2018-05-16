@@ -4,7 +4,7 @@ import aschworer.astrologer.alexa.handler.responder.AlexaResponder;
 import com.amazon.speech.json.SpeechletRequestEnvelope;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.*;
-import aschworer.astrologer.alexa.handler.responder.service.NatalChartAlexaResponder;
+import aschworer.astrologer.alexa.handler.responder.charts.NatalChartAlexaResponder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package aschworer.astrologer.alexa.handler.responder.service;
+package aschworer.astrologer.alexa.handler.responder.charts;
 
 /**
  * @author aschworer
@@ -6,7 +6,7 @@ package aschworer.astrologer.alexa.handler.responder.service;
 public enum AstrologerIntent {
     SUN_SIGN_INTENT("SunSignIntent"),
     MOON_SIGN_INTENT("MoonSignIntent"),
-    NATAL_CHART_INTENT("NatalChartIntent"),
+    FULL_CHART_INTENT("FullChartIntent"),
     BIRTH_DAY_INTENT("BirthDayIntent"),
     BIRTH_YEAR_INTENT("BirthYearIntent"),
     YES_INTENT("AMAZON.YesIntent"),

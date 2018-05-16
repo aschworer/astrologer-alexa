@@ -1,6 +1,5 @@
 package aschworer.astrologer.alexa.service;
 
-import aschworer.astrologer.alexa.handler.responder.service.NatalChartsService;
 import aschworer.astrologer.alexa.service.flatlib.FlatLibBirthDetails;
 import aschworer.astrologer.alexa.service.flatlib.FlatLibService;
 import aschworer.astrologer.model.*;
@@ -11,7 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static aschworer.astrologer.alexa.handler.responder.service.Astrologer.ALEXA_DATE_FORMAT;
+import static aschworer.astrologer.alexa.handler.responder.charts.Astrologer.ALEXA_DATE_FORMAT;
 import static aschworer.astrologer.alexa.service.flatlib.FlatLibService.FLATLIB_DATE_FORMATTER;
 
 /**

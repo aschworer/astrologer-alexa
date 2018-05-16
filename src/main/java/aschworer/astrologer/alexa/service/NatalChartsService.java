@@ -1,4 +1,4 @@
-package aschworer.astrologer.alexa.handler.responder.service;
+package aschworer.astrologer.alexa.service;
 
 import aschworer.astrologer.model.NatalChart;
 import aschworer.astrologer.model.Planet;
