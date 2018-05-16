@@ -70,7 +70,7 @@
           "slots": [
             {
               "name": "year",
-              "type": "AMAZON.FOUR_DIGIT_NUMBER"
+              "type": "AMAZON.DATE"
             }
           ],
           "samples": [
