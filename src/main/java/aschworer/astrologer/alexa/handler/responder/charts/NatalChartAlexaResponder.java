@@ -2,6 +2,7 @@ package aschworer.astrologer.alexa.handler.responder.charts;
 
 import aschworer.astrologer.alexa.handler.responder.*;
 import aschworer.astrologer.alexa.service.*;
+import aschworer.astrologer.model.*;
 import com.amazon.speech.slu.*;
 import com.amazon.speech.speechlet.*;
 import org.slf4j.*;
@@ -9,7 +10,7 @@ import org.slf4j.*;
 import java.util.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
-import static aschworer.astrologer.alexa.handler.responder.charts.SessionConstants.*;
+import static aschworer.astrologer.alexa.handler.responder.charts.SessionAttributes.*;
 
 /**
  * @author aschworer
@@ -27,8 +28,9 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
             case SUN_SIGN_INTENT:
                 setInitialIntent(session, AstrologerIntent.SUN_SIGN_INTENT.getName());
                 return askForBirthDate();
-            case MOON_SIGN_INTENT:
-                setInitialIntent(session, AstrologerIntent.MOON_SIGN_INTENT.getName());
+            case PLANET_SIGN_INTENT:
+                setInitialIntent(session, AstrologerIntent.PLANET_SIGN_INTENT.getName());
+                session.setAttribute(PLANET, intent.getSlot("planet").getValue());
                 return askForBirthDate();
             case FULL_CHART_INTENT:
                 setInitialIntent(session, AstrologerIntent.FULL_CHART_INTENT.getName());
@@ -104,14 +106,14 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         switch (AstrologerIntent.getByName(initial)) {
             case SUN_SIGN_INTENT://todo add other planets in sign
                 return astrologer.respondToSunSign(date, null, null, null);
-            case MOON_SIGN_INTENT:
+            case PLANET_SIGN_INTENT:
 //                if (time == null) {
 //                    return askForBirthTime();
 //                } else
 //                if (lat == null || lng == null) {
 //                    return askForBirthPlace();
 //                }//todo
-                return astrologer.respondToMoonSign(date, place, lat, lng);
+                return astrologer.respondToPlanetSign(Planet.getByString((String)session.getAttribute("planet")), date, place, lat, lng);
             case FULL_CHART_INTENT:
 //                if (lat == null || lng == null) {
 //                    return askForBirthPlace();
@@ -155,7 +157,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         log.info("initial intent: " + currentIntent);
         switch (AstrologerIntent.getByName(currentIntent)) {
             //todo - can be a sun sign too here (sign borders)
-            case MOON_SIGN_INTENT:
+            case PLANET_SIGN_INTENT:
                 //get a date from session
                 return astrologer.respondToMoonSign(slot.getValue());
             case FULL_CHART_INTENT:

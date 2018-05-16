@@ -15,12 +15,18 @@
           ]
         },
         {
-          "name": "MoonSignIntent",
-          "slots": [],
+          "name": "PlanetSignIntent",
+          "slots": [
+            {
+              "name": "planet",
+              "type": "Planet"
+            }
+          ],
           "samples": [
-            "tell me a Moon sign",
-            "get Moon sign",
-            "Moon sign"
+            "tell me a {planet} sign",
+            "get {planet} sign",
+            "{planet} sign",
+            "sign of {planet}"
           ]
         },
         {
@@ -108,7 +114,63 @@
           "samples": []
         }
       ],
-      "types": []
+      "types": [
+        {
+          "name": "Planet",
+          "values": [
+            {
+              "name": {
+                "value": "Mercury"
+              }
+            },
+            {
+              "name": {
+                "value": "Venus"
+              }
+            },
+            {
+              "name": {
+                "value": "Earth"
+              }
+            },
+            {
+              "name": {
+                "value": "Mars"
+              }
+            },
+            {
+              "name": {
+                "value": "Jupiter"
+              }
+            },
+            {
+              "name": {
+                "value": "Saturn"
+              }
+            },
+            {
+              "name": {
+                "value": "Uranus"
+              }
+            },
+            {
+              "name": {
+                "value": "Neptune"
+              }
+            },
+            {
+              "name": {
+                "value": "Pluto"
+              }
+            },
+            {
+              "name": {
+                "value": "Chiron"
+              }
+            }
+          ]
+        }
+      ]
     }
   }
 }

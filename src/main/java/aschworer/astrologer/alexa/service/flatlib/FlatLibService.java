@@ -26,9 +26,6 @@ import java.util.ResourceBundle;
  */
 public class FlatLibService {
 
-    public static final DateTimeFormatter FLATLIB_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
-    public static final DateTimeFormatter FLATLIB_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     private static final Logger log = LoggerFactory.getLogger(FlatLibService.class);
 

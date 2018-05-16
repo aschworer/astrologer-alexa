@@ -32,7 +32,7 @@ public class Astrologer extends Speaker {
         return respondToPlanetSign(Planet.SUN, date, placeFullName, lat, lng);
     }
 
-    private SpeechletResponse respondToPlanetSign(Planet planet, String date, String placeFullName, String lat, String lng) {
+    SpeechletResponse respondToPlanetSign(Planet planet, String date, String placeFullName, String lat, String lng) {
         try {
             LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
             String placeOfBirth = "";
@@ -47,9 +47,6 @@ public class Astrologer extends Speaker {
         } catch (Exception e) {
             return ask("NatalChartError");
         }
-    }
-    SpeechletResponse respondToMoonSign(String date, String placeFullName, String lat, String lng) {
-        return respondToPlanetSign(Planet.MOON, date, placeFullName, lat, lng);
     }
 
     SpeechletResponse respondWithNatalChart(String date, String placeFullName, String lat, String lng) {

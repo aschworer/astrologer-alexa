@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.Astrologer.ALEXA_DATE_FORMAT;
-import static aschworer.astrologer.alexa.service.flatlib.FlatLibService.FLATLIB_DATE_FORMATTER;
+import static aschworer.astrologer.alexa.service.flatlib.FlatLibBirthDetails.FLATLIB_DATE_FORMATTER;
 
 /**
  * @author aschworer

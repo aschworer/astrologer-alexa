@@ -4,11 +4,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.format.*;
+
 /**
  * @author aschworer
  */
 @NoArgsConstructor
 public class FlatLibBirthDetails {
+
+    public static final DateTimeFormatter FLATLIB_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+    public static final DateTimeFormatter FLATLIB_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withResolverStyle(ResolverStyle.STRICT);
 
     @Setter
     @Getter

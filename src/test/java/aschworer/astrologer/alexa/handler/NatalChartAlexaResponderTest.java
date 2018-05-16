@@ -23,7 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
-import static aschworer.astrologer.alexa.handler.responder.charts.SessionConstants.*;
+import static aschworer.astrologer.alexa.handler.responder.charts.SessionAttributes.*;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -61,10 +61,10 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     @Test
     //no lambda involved
     public void testMoonSignIntent() throws Exception {
-        final SpeechletResponse speechletResponse = natalChartAlexaResponder.respondToIntent(buildIntent(AstrologerIntent.MOON_SIGN_INTENT.getName()), session);
+        final SpeechletResponse speechletResponse = natalChartAlexaResponder.respondToIntent(buildIntent(AstrologerIntent.PLANET_SIGN_INTENT.getName()), session);
         assertEquals(SpokenCards.TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
         assertFalse(speechletResponse.getShouldEndSession());
-        Mockito.verify(session).setAttribute(INITIAL_INTENT, AstrologerIntent.MOON_SIGN_INTENT.getName());
+        Mockito.verify(session).setAttribute(INITIAL_INTENT, AstrologerIntent.PLANET_SIGN_INTENT.getName());
     }
 
     @Test
@@ -199,7 +199,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
 
     @Test
     public void testMoonSignSuccess() throws Exception {
-        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.MOON_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
         Mockito.when(session.getAttribute("place")).thenReturn("some place");
         Mockito.when(session.getAttribute("lat")).thenReturn("+33.33");
@@ -213,7 +213,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     @Test
     @Ignore
     public void test_MoonSignSuccessBirthPlaceRequired() throws Exception {
-        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.MOON_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute("date")).thenReturn("1986-04-20");
         Mockito.when(session.getAttribute("place")).thenReturn("some place");
         Mockito.when(session.getAttribute("lat")).thenReturn("+33.33");
@@ -235,7 +235,7 @@ public class NatalChartAlexaResponderTest extends StandardAlexaResponderTest {
     @Test
     @Ignore
     public void testBirthTimeIntentOnMoonSign() throws Exception {
-        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.MOON_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(AstrologerIntent.PLANET_SIGN_INTENT.getName());
         assertEquals(SpokenCards.SPEAK_PLANET_SIGN, natalChartAlexaResponder.respondToIntent(
                 Intent.builder().withName(AstrologerIntent.BIRTH_TIME_INTENT.toString()).withSlots(buildSlotsMap("time", "07:23")).build(),
                 session).getCard().getTitle());

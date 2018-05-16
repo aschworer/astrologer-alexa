@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * @author ASC
  */
-public interface SessionConstants {
+public interface SessionAttributes {
     String INITIAL_INTENT = "initial_intent";
     String BIRTH_DATE = "date";
     String BIRTH_YEAR = "year";
@@ -15,5 +15,6 @@ public interface SessionConstants {
     String BIRTH_LAT = "lat";
     String BIRTH_LNG = "lng";
     String BIRTH_TIME = "time";
+    String PLANET = "planet";
     String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
 }

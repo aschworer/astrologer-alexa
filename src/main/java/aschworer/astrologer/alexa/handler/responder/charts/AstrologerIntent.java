@@ -5,7 +5,7 @@ package aschworer.astrologer.alexa.handler.responder.charts;
  */
 public enum AstrologerIntent {
     SUN_SIGN_INTENT("SunSignIntent"),
-    MOON_SIGN_INTENT("MoonSignIntent"),
+    PLANET_SIGN_INTENT("PlanetSignIntent"),
     FULL_CHART_INTENT("FullChartIntent"),
     BIRTH_DAY_INTENT("BirthDayIntent"),
     BIRTH_YEAR_INTENT("BirthYearIntent"),
