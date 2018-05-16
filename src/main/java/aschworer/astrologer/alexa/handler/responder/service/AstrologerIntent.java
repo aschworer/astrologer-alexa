@@ -3,26 +3,26 @@ package aschworer.astrologer.alexa.handler.responder.service;
 /**
  * @author aschworer
  */
-public enum NatalChartIntent {
+public enum AstrologerIntent {
     SUN_SIGN_INTENT("SunSignIntent"),
     MOON_SIGN_INTENT("MoonSignIntent"),
     NATAL_CHART_INTENT("NatalChartIntent"),
     BIRTH_DAY_INTENT("BirthDayIntent"),
     BIRTH_YEAR_INTENT("BirthYearIntent"),
-    CONFIRM_DATE_INTENT("ConfirmDateIntent"),
-    DENY_DATE_INTENT("DenyDateIntent"),
+    YES_INTENT("AMAZON.YesIntent"),
+    NO_INTENT("AMAZON.NoIntent"),
     BIRTH_TIME_INTENT("BirthTimeIntent"),
     BIRTH_PLACE_INTENT("BirthPlaceIntent"),
     NA("NA");
 
     private String name;
 
-    NatalChartIntent(String name) {
+    AstrologerIntent(String name) {
         this.name = name;
     }
 
-    public static NatalChartIntent getByName(String name) {
-        for (NatalChartIntent v : values()) {
+    public static AstrologerIntent getByName(String name) {
+        for (AstrologerIntent v : values()) {
             if (v.getName().equals(name)) {
                 return v;
             }

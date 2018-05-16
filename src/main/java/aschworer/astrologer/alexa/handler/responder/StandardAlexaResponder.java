@@ -31,20 +31,17 @@ public abstract class StandardAlexaResponder extends Speaker implements AlexaRes
         return ask(Cards.WELCOME);
     }
 
-
     @Override
     public SpeechletResponse help() {
         return ask(Cards.HELP);
     }
 
     @Override
-    public SpeechletResponse stop() {
-        return speak(Cards.STOP);
-    }
+    public SpeechletResponse stop() {return speakAndFinish(Cards.STOP);}
 
     @Override
     public SpeechletResponse cancel() {
-        return speak(Cards.CANCEL);
+        return speakAndFinish(Cards.CANCEL);
     }
 
 }

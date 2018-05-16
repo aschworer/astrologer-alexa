@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @author aschworer
  */
-public class NatalChartSpeechlet implements SpeechletV2 {
+public class AstrologerSpeechlet implements SpeechletV2 {
 
-    private static final Logger log = LoggerFactory.getLogger(NatalChartSpeechlet.class);
+    private static final Logger log = LoggerFactory.getLogger(AstrologerSpeechlet.class);
 
     private AlexaResponder alexaResponder = new NatalChartAlexaResponder();
 
@@ -24,14 +24,14 @@ public class NatalChartSpeechlet implements SpeechletV2 {
 
     @Override
     public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
-        log.info("onSessionStarted requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onLaunch requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
         return alexaResponder.greet();
     }
 
     @Override
     public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope)  {
         Intent intent = requestEnvelope.getRequest().getIntent();
-        log.info("onSessionStarted requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onIntent requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
         return alexaResponder.respondToIntent(intent, requestEnvelope.getSession());
     }
 

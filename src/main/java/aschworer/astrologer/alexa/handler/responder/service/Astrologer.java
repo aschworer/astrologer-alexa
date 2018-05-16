@@ -41,12 +41,12 @@ public class Astrologer extends Speaker {
                 placeOfBirth = placeOfBirth + " born in " + placeFullName;
             }
             if (Planet.SUN == planet) date = formatNoYear(date);
-            return speak(Cards.SPEAK_PLANET_SIGN, planet.toString(), "<say-as interpret-as=\"date\">" + date + "</say-as>" + placeOfBirth,
+            return speakAndFinish(Cards.SPEAK_PLANET_SIGN, planet.toString(), "<say-as interpret-as=\"date\">" + date + "</say-as>" + placeOfBirth,
                     service.getPlanetSign(planet, parsedDate, lat, lng)[0].toString());//todo
         } catch (ParseException e) {
             return ask("InvalidDate");
         } catch (Exception e) {
-            return ask("NatalChartimport aschworer.astrologer.model.");
+            return ask("NatalChartError");
         }
     }
     SpeechletResponse respondToMoonSign(String date, String placeFullName, String lat, String lng) {
@@ -60,8 +60,8 @@ public class Astrologer extends Speaker {
             if (lat != null && lng != null) {
                 placeOfBirth = placeOfBirth + " in " + placeFullName;
             }
-            return speak(Cards.SPEAK_NATAL_CHART, "<say-as interpret-as=\"date\">" + date + "</say-as>" + placeOfBirth,
-                    getNatalChartAsString(service.getNatalChart(parsedDate, lat, lng)));
+            return speakAndFinish(Cards.SPEAK_NATAL_CHART, "<say-as interpret-as=\"date\">" + date + "</say-as>" + placeOfBirth,
+                    getNatalChartAsString(service.getNatalChart(parsedDate, lat, lng)) + ". Would you like me to repeat that?");
         } catch (ParseException e) {
             return ask("InvalidDate");
         } catch (Exception e) {

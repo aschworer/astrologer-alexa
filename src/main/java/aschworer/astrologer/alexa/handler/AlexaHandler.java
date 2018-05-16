@@ -20,6 +20,6 @@ public class AlexaHandler extends SpeechletRequestStreamHandler {
     }
 
     public AlexaHandler() {
-        super(new NatalChartSpeechlet(), supportedApplicationIds);
+        super(new AstrologerSpeechlet(), supportedApplicationIds);
     }
 }

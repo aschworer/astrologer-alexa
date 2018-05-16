@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
  */
 public abstract class Speaker {
 
-    private static final Logger log = LoggerFactory.getLogger(StandardAlexaResponder.class);
+    private static final Logger log = LoggerFactory.getLogger(Speaker.class);
     static String[] suffixes =
             //    0     1     2     3     4     5     6     7     8     9
             {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
@@ -38,7 +38,7 @@ public abstract class Speaker {
         return speak(cardName, messages.getString(cardName), false);
     }
 
-    protected SpeechletResponse speak(String cardName, String... args) {
+    protected SpeechletResponse speakAndFinish(String cardName, String... args) {
         return speak(cardName, MessageFormat.format(messages.getString(cardName), args), true);
     }
 
