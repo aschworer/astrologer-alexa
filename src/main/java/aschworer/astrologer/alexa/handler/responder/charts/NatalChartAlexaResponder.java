@@ -2,20 +2,21 @@ package aschworer.astrologer.alexa.handler.responder.charts;
 
 import aschworer.astrologer.alexa.handler.responder.*;
 import aschworer.astrologer.alexa.service.*;
-import aschworer.astrologer.model.*;
 import com.amazon.speech.slu.*;
 import com.amazon.speech.speechlet.*;
 import org.slf4j.*;
 
+import java.text.*;
 import java.util.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
-import static aschworer.astrologer.alexa.handler.responder.charts.SessionAttributes.*;
 
 /**
  * @author aschworer
  */
 public class NatalChartAlexaResponder extends StandardAlexaResponder {
+
+    public static final String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
 
     private static final Logger log = LoggerFactory.getLogger(NatalChartAlexaResponder.class);
     private Astrologer astrologer = new Astrologer();
@@ -24,34 +25,35 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
     @Override
     public SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
         log.info(intent.getName());
+        SessionDetails sessionDetails = new SessionDetails(session);
         switch (AstrologerIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
-                setInitialIntent(session, AstrologerIntent.SUN_SIGN_INTENT.getName());
+                sessionDetails.setInitialIntent(AstrologerIntent.SUN_SIGN_INTENT);
                 return askForBirthDate();
             case PLANET_SIGN_INTENT:
-                setInitialIntent(session, AstrologerIntent.PLANET_SIGN_INTENT.getName());
-                session.setAttribute(PLANET, intent.getSlot("planet").getValue());
+                sessionDetails.setInitialIntent(AstrologerIntent.PLANET_SIGN_INTENT);
+                sessionDetails.setPlanet(intent.getSlot("planet").getValue());
                 return askForBirthDate();
             case FULL_CHART_INTENT:
-                setInitialIntent(session, AstrologerIntent.FULL_CHART_INTENT.getName());
+                sessionDetails.setInitialIntent(AstrologerIntent.FULL_CHART_INTENT);
                 return askForBirthDate();
             case BIRTH_DAY_INTENT:
-                return respondToBirthDay(intent, session);
+                return respondToBirthDay(intent, sessionDetails);
             case BIRTH_YEAR_INTENT:
                 final String year = intent.getSlot("year").getValue();
                 log.debug(year);
-                if (!CURRENT_YEAR.equalsIgnoreCase(year)) session.setAttribute(BIRTH_YEAR, year);
-                return doubleCheckDate(session);
+                if (!CURRENT_YEAR.equalsIgnoreCase(year)) sessionDetails.setYear(year);
+                return doubleCheckDate(sessionDetails);
             case YES_INTENT:
                 //when confirming birthdate
-                return respondToBirthDateConfirmation(session);
+                return respondToBirthDateConfirmation(sessionDetails);
             case NO_INTENT:
                 //when denying birthdate
                 return askForBirthDate();
 //            case BIRTH_TIME_INTENT:
 //                return respondToBirthTime(session, intent.getSlot("time"));
             case BIRTH_PLACE_INTENT:
-                return respondToBirthPlace(session, intent.getSlot("place"));
+                return respondToBirthPlace(sessionDetails, intent.getSlot("place"));
 //            case CONFIRM_BIRTH_PLACE_INTENT:
 //                return respondToBirthPlaceConfirmation(session);
             default:
@@ -59,11 +61,11 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         }
     }
 
-    private SpeechletResponse respondToBirthDay(Intent intent, Session session) {
+    private SpeechletResponse respondToBirthDay(Intent intent, SessionDetails session) {
         final String day = intent.getSlot("day").getValue();
-        log.debug(intent.getSlot("day").getValue());
-        session.setAttribute(BIRTH_DATE, day);
-        if (!day.startsWith(CURRENT_YEAR) || AstrologerIntent.SUN_SIGN_INTENT.toString().equals(getInitialIntent(session))) {
+        log.debug(day);
+        session.setBirthDate(day);
+        if (!day.startsWith(CURRENT_YEAR) || session.isSunSignRequested()) {
             return doubleCheckDate(session);
         } else {
             return askForBirthDateYear();
@@ -76,34 +78,32 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
      * If its a SUN sign intent - parse day and month to "20 november" and goto confirm
      * ELSE goto get a year (replace 2015 with new one if present), and then confirm
      */
-    private SpeechletResponse doubleCheckDate(Session session) {
-        String date = (String) session.getAttribute(BIRTH_DATE);
-        String year = (String) session.getAttribute(BIRTH_YEAR);
-        final String initialIntent = getInitialIntent(session);
-        log.info("double check the date - " + date);
-        log.info("double check the date. year - " + date);
-        log.info("double check the date. initial intent - " + date);
-        if (AstrologerIntent.SUN_SIGN_INTENT.toString().equals(initialIntent)) {
+    private SpeechletResponse doubleCheckDate(SessionDetails session) {
+        String date = session.getBirthDate();
+        String year = session.getBirthYear();
+        log.info("double check the birthDate - " + date);
+        log.info("double check the birthDate. year - " + date);
+        log.info("double check the birthDate. initial intent - " + date);
+        if (session.isSunSignRequested()) {
             return ask(DOUBLE_CHECK_DATE, "<say-as interpret-as=\"date\">" + formatNoYear(date) + "</say-as>");
         } else if (date.startsWith(CURRENT_YEAR)) {
             date = year + date.substring(date.indexOf("-"), date.length());
-            session.setAttribute(BIRTH_DATE, date);
+            session.setBirthDate(date);
         }
         return ask(DOUBLE_CHECK_DATE, "<say-as interpret-as=\"date\">" + date + "</say-as>");
     }
 
-    private SpeechletResponse respondToInitialIntent(Session session) {
-        final String initial = getInitialIntent(session);
-        String date = (String) session.getAttribute(BIRTH_DATE);
-        String time = (String) session.getAttribute(BIRTH_TIME); // todo if not null - combine with date
-        String place = (String) session.getAttribute(BIRTH_PLACE);
+    private SpeechletResponse respondToInitialIntent(SessionDetails session) {
+        String date = session.getBirthDate();
+//        String time = (String) session.getAttribute(BIRTH_TIME); // todo if not null - combine with birthDate
+        String place = session.getBirthPlace();
 //        String placeFullName = (String) session.getAttribute(BIRTH_PLACE_FULLNAME);
-        String lat = (String) session.getAttribute(BIRTH_LAT);
-        String lng = (String) session.getAttribute(BIRTH_LNG);
-        log.info("initial intent: " + initial);
-        log.info("date - " + date);
-        if (initial == null) return help();
-        switch (AstrologerIntent.getByName(initial)) {
+        String lat = session.getBirthLat();;
+        String lng = session.getBirthLng();;
+//        log.info("initial intent: " + initial);
+        log.info("birthDate - " + date);
+        if (!session.isInitialIntentPresent()) return help();
+        switch (session.getInitialIntent()) {
             case SUN_SIGN_INTENT://todo add other planets in sign
                 return astrologer.respondToSunSign(date, null, null, null);
             case PLANET_SIGN_INTENT:
@@ -113,7 +113,7 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 //                if (lat == null || lng == null) {
 //                    return askForBirthPlace();
 //                }//todo
-                return astrologer.respondToPlanetSign(Planet.getByString((String)session.getAttribute("planet")), date, place, lat, lng);
+                return astrologer.respondToPlanetSign(session.getPlanet(), date, place, lat, lng);
             case FULL_CHART_INTENT:
 //                if (lat == null || lng == null) {
 //                    return askForBirthPlace();
@@ -127,19 +127,18 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         }
     }
 
-    private SpeechletResponse respondToBirthDateConfirmation(Session session) {
-        String clarifiedDate = (String) session.getAttribute(BIRTH_DATE);
-        log.info("clarified date - " + clarifiedDate);
+    private SpeechletResponse respondToBirthDateConfirmation(SessionDetails session) {
+        log.info("clarified birthDate - " + session.getBirthDate());
         return respondToInitialIntent(session);
     }
 
-    private SpeechletResponse respondToBirthPlace(Session session, Slot slot) {
+    private SpeechletResponse respondToBirthPlace(SessionDetails session, Slot slot) {
         final String place = slot.getValue();
         log.debug(slot.getValue());
-        session.setAttribute(BIRTH_PLACE, place);
+        session.setBirthPlace(place);
         Map<String, String> coordinates = locationService.getCountryCoordinates(place);
-        session.setAttribute(BIRTH_LAT, coordinates.get("lat"));
-        session.setAttribute(BIRTH_LNG, coordinates.get("lng"));
+        session.setBirthLat(coordinates.get("lat"));
+        session.setBirthLng(coordinates.get("lng"));
 //        session.setAttribute(BIRTH_PLACE_FULLNAME, coordinates.get("fullname"));
         return respondToInitialIntent(session);
 
@@ -158,19 +157,15 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
         switch (AstrologerIntent.getByName(currentIntent)) {
             //todo - can be a sun sign too here (sign borders)
             case PLANET_SIGN_INTENT:
-                //get a date from session
+                //get a birthDate from session
                 return astrologer.respondToMoonSign(slot.getValue());
             case FULL_CHART_INTENT:
-                //get a date from session
+                //get a birthDate from session
                 return astrologer.respondWithNatalChart(slot.getValue());
             default:
                 return help();
         }
     }*/
-
-    private String getInitialIntent(Session session) {
-        return (String) session.getAttribute(INITIAL_INTENT);
-    }
 
     private SpeechletResponse askForBirthDateYear() {
         return ask(TELL_ME_BIRTH_YEAR);
@@ -187,10 +182,5 @@ public class NatalChartAlexaResponder extends StandardAlexaResponder {
 //    private SpeechletResponse askForBirthPlace() {
 //        return ask(TELL_ME_BIRTH_PLACE);
 //    }
-
-    private void setInitialIntent(Session session, String name) {
-        session.setAttribute(INITIAL_INTENT, name);
-    }
-
 
 }
