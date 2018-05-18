@@ -17,9 +17,9 @@ import static org.junit.Assert.assertEquals;
  * @author aschworer
  */
 @RunWith(MockitoJUnitRunner.class)
-public class StandardAlexaResponderTest {
+public class AlexaResponderTest {
 
-    private NatalChartAlexaResponder natalChartAlexaResponder = new NatalChartAlexaResponder();
+    private AstrologerAlexaResponder astrologerAlexaResponder = new AstrologerAlexaResponder();
 
     @Mock
     private Session session;
@@ -41,7 +41,7 @@ public class StandardAlexaResponderTest {
     }
 
     private String getResponseCardTitleForIntentName(String intentName) throws SpeechletException {
-        return natalChartAlexaResponder.respondToIntent(buildIntent(intentName), session).getCard().getTitle();
+        return astrologerAlexaResponder.respondToIntent(buildIntent(intentName), session).getCard().getTitle();
     }
 
     private Intent buildIntent(String intentName) {

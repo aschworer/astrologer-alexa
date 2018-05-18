@@ -3,20 +3,40 @@ package aschworer.astrologer.alexa.handler.responder;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletResponse;
+import aschworer.astrologer.alexa.handler.responder.charts.SpokenCards;
 
 /**
  * @author aschworer
  */
-public interface AlexaResponder {
+public abstract class AlexaResponder extends Speaker {
 
-    SpeechletResponse greet();
+    public SpeechletResponse respondToIntent(Intent intent, Session session) {
+        switch (AlexaIntent.getByName(intent.getName())) {
+            case AMAZON_HELP_INTENT:
+                return help();
+            case AMAZON_STOP_INTENT:
+                return stop();
+            case AMAZON_CANCEL_INTENT:
+                return cancel();
+            default:
+                return respondToCustomIntent(intent, session);
+        }
+    }
 
-    SpeechletResponse respondToIntent(Intent intent, Session session);
+    public abstract SpeechletResponse respondToCustomIntent(Intent intent, Session session);
 
-    SpeechletResponse help();
+    public SpeechletResponse greet() {
+        return ask(SpokenCards.WELCOME);
+    }
 
-    SpeechletResponse stop();
+    public SpeechletResponse help() {
+        return ask(SpokenCards.HELP);
+    }
 
-    SpeechletResponse cancel();
+    public SpeechletResponse stop() {return speakAndFinish(SpokenCards.STOP);}
+
+    public SpeechletResponse cancel() {
+        return speakAndFinish(SpokenCards.CANCEL);
+    }
 
 }

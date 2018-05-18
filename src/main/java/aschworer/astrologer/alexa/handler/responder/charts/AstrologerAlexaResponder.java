@@ -14,11 +14,11 @@ import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 /**
  * @author aschworer
  */
-public class NatalChartAlexaResponder extends StandardAlexaResponder {
+public class AstrologerAlexaResponder extends AlexaResponder {
 
     public static final String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
 
-    private static final Logger log = LoggerFactory.getLogger(NatalChartAlexaResponder.class);
+    private static final Logger log = LoggerFactory.getLogger(AstrologerAlexaResponder.class);
     private Astrologer astrologer = new Astrologer();
     private GeocodeLocationService locationService = new GeocodeLocationService();
 
