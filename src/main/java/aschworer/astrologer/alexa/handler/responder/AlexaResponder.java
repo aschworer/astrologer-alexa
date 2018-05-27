@@ -45,11 +45,11 @@ public class AlexaResponder extends Speaker {
     }
 
     public SpeechletResponse greet() {
-        return ask(SpokenCards.WELCOME);
+        return repeatedSpeech(SpokenCards.WELCOME);
     }
 
     public SpeechletResponse help() {
-        return ask(SpokenCards.HELP);
+        return repeatedSpeech(SpokenCards.HELP);
     }
 
     public SpeechletResponse stop() {

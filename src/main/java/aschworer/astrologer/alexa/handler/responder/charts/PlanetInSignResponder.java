@@ -40,18 +40,19 @@ public class PlanetInSignResponder extends ChartResponder {
                 return askForBirthPlace();
             } else {
                 //todo setBirthTimeConfirmed, for chart too
-                String placeOfBirth = (place != null) ? " in " + place : "";
                 if (date.startsWith(CURRENT_YEAR) || parsedDate.isAfter(LocalDate.now())) {
                     date = formatNoYear(date);
                 }
+                String placeAndTimeOfBirth = (place != null) ? " in " + place : "";
+                placeAndTimeOfBirth = placeAndTimeOfBirth + ((session.getBirthTime() != null) ? " at " + session.getBirthTime() : "");
                 return speakAndFinish(SpokenCards.SPEAK_PLANET_SIGN, session.getPlanet().toString(), String.format(SAY_AS_DATE, date) +
-                        placeOfBirth, planetInSign[0].toString());//todo
+                        placeAndTimeOfBirth, planetInSign[0].toString());//todo
             }
         } catch (ParseException e) {
-            return ask("InvalidDate");
+            return repeatedSpeech("InvalidDate");
         } catch (Exception e) {
             log.error("error", e);
-            return ask("NatalChartError");
+            return repeatedSpeech("NatalChartError");
         }
     }
 }

@@ -116,6 +116,15 @@
         {
           "name": "AMAZON.NoIntent",
           "samples": []
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": [
+            "could you repeat please",
+            "what",
+            "say again",
+            "say that again"
+          ]
         }
       ],
       "types": [

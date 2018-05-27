@@ -16,8 +16,10 @@ public class SessionDetails {
     public static final String BIRTH_TIME = "time";
     public static final String PLANET = "planet";
     public static final String BIRTH_DATE_CONFIRMED = "birthDateConfirmed";
+    public static final String LAST_TELLME_CARD = "lastTellMeCard";
+    public static final String LAST_TELLME_SPEECH = "lastTellMeSpeech";
     public static final String LAST_SPOKEN_CARD = "lastSpokenCard";
-    public static final String LAST_SPEECH = "lastSpeech";
+    public static final String LAST_SPOKEN_SPEECH = "lastSpokenSpeech";
 
     private Session session;
 
@@ -45,12 +47,20 @@ public class SessionDetails {
         session.setAttribute(INITIAL_INTENT, initialIntent.getName());
     }
 
-    public String getLastSpeech() {
-        return (String) session.getAttribute(LAST_SPEECH);
+    public String getLastTellMeSpeech() {
+        return (String) session.getAttribute(LAST_TELLME_SPEECH);
+    }
+
+    public String getLastTellMeCard() {
+        return (String) session.getAttribute(LAST_TELLME_CARD);
     }
 
     public String getLastSpokenCard() {
         return (String) session.getAttribute(LAST_SPOKEN_CARD);
+    }
+
+    public String getLastSpokenSpeech() {
+        return (String) session.getAttribute(LAST_SPOKEN_SPEECH);
     }
 
     public String getBirthTimeZoneOffset() {
@@ -62,15 +72,15 @@ public class SessionDetails {
     }
 
     public boolean isAskingForBirthPlace() {
-        return SpokenCards.TELL_ME_BIRTH_PLACE.equals(session.getAttribute(LAST_SPOKEN_CARD));
+        return SpokenCards.TELL_ME_BIRTH_PLACE.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
     public boolean isAskingForBirthTime() {
-        return SpokenCards.TELL_ME_BIRTH_TIME.equals(session.getAttribute(LAST_SPOKEN_CARD));
+        return SpokenCards.TELL_ME_BIRTH_TIME.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
     public boolean isAskingForBirthYear() {
-        return SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_SPOKEN_CARD));
+        return SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
     public String getBirthDate() {
@@ -138,7 +148,7 @@ public class SessionDetails {
     public String toString() {
         StringBuilder result = new StringBuilder("Session: \n");
         result.append("intent: ").append(getInitialIntent()).append("\n");
-        result.append("last speech: ").append((getLastSpokenCard() == null) ? "none" : getLastSpokenCard()).append("\n");
+        result.append("last speech: ").append((getLastTellMeCard() == null) ? "none" : getLastTellMeCard()).append("\n");
         result.append("b-date: ").append(getBirthDate()).append("\n");
         result.append("b-date confirmed: ").append(isBirthDateConfirmed()).append("\n");
         result.append("b-year: ").append(getBirthYear()).append("\n");

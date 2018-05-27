@@ -25,7 +25,12 @@ public class AstrologerSpeechlet implements SpeechletV2 {
     @Override
     public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
 //        log.info("onLaunch requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
-        return alexaResponder.greet();
+        SpeechletResponse greet = alexaResponder.greet();
+
+        requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_CARD, greet.getCard().getTitle());
+        requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_SPEECH, ((SimpleCard)greet.getCard()).getContent());
+
+        return greet;
     }
 
     @Override
@@ -34,9 +39,11 @@ public class AstrologerSpeechlet implements SpeechletV2 {
 //        log.info("onIntent requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
         try {
             SpeechletResponse speechletResponse = alexaResponder.respondToIntent(intent, requestEnvelope.getSession());
+            requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_CARD, speechletResponse.getCard().getTitle());
+            requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_SPEECH, ((SimpleCard)speechletResponse.getCard()).getContent());
             if (speechletResponse.getCard().getTitle().startsWith("TellMe")) {
-                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_CARD, speechletResponse.getCard().getTitle());
-                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPEECH, ((SimpleCard)speechletResponse.getCard()).getContent());
+                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_TELLME_CARD, speechletResponse.getCard().getTitle());
+                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_TELLME_SPEECH, ((SimpleCard)speechletResponse.getCard()).getContent());
             }
             return speechletResponse;
         } catch (Exception e) {

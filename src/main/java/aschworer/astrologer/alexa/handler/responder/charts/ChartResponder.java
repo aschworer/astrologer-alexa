@@ -52,10 +52,10 @@ public class ChartResponder extends AstrologerResponder {
             return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, String.format(SAY_AS_DATE, date) + " born in " + place + " at " + time,
                     getNatalChartAsString(service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset())));
         } catch (ParseException e) {
-            return ask("InvalidDate");
+            return repeatedSpeech("InvalidDate");//todo
         } catch (Exception e) {
             log.error("error", e);
-            return ask("NatalChartError");
+            return repeatedSpeech("NatalChartError");//todo
         }
     }
 

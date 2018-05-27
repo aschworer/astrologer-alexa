@@ -53,8 +53,8 @@ public abstract class AstrologerResponder extends Speaker {
                     session.setBirthTime(DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).format(parsedTime));
                     return respondToInitialIntent(session);
                 } else {
-                    //try again
-                    return getLastSpeech(session);
+                    //repeat last said
+                    return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case BIRTH_TIME_INTENT:
                 session.setBirthTime(intent.getSlot("time").getValue());
@@ -65,20 +65,19 @@ public abstract class AstrologerResponder extends Speaker {
                 if (session.isAskingForBirthPlace()) {
                     return respondToBirthPlace(session, intent.getSlot("place").getValue());
                 } else {
-                    return getLastSpeech(session);
+                    //repeat last said
+                    return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case YES_INTENT:
                 return respondToInitialIntent(session);
             case NO_INTENT:
-                return getLastSpeech(session);
+                //repeat last question
+                return repeat(session.getLastTellMeCard(), session.getLastTellMeSpeech());
 //                return respondToNo(session);
             default:
-                return ask(SpokenCards.HELP);
+                //repeat last said
+                return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
         }
-    }
-
-    private SpeechletResponse getLastSpeech(SessionDetails session) {
-        return lastSpeech(session.getLastSpokenCard(), session.getLastSpeech());
     }
 
     protected SpeechletResponse respondToBirthDay(SessionDetails session) {

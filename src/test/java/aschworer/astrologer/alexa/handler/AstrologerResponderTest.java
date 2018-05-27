@@ -107,7 +107,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     //no lambda involved
     public void testDenyDateIntent() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
         final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(NO_INTENT.getName()).build(), session);
         assertEquals(TELL_ME_BIRTH_DAY, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
@@ -118,7 +118,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     public void testBirthYearIntent() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("2015-11-20");
-        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(), buildSlotsMap("year", "1986")), session);
 //        Mockito.verify(session).setAttribute(BIRTH_YEAR, "1986");
         assertEquals(DOUBLE_CHECK_DATE, response.getCard().getTitle());
@@ -177,7 +177,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
         final String country = "Australia";
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(country);
-        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_PLACE_INTENT.getName(),
                 buildSlotsMap(BIRTH_PLACE, country)), session);
         assertEquals(DOUBLE_CHECK_PLACE, response.getCard().getTitle());
@@ -229,8 +229,8 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("11:20");
         Mockito.when(session.getAttribute(BIRTH_DATE_CONFIRMED)).thenReturn(Boolean.TRUE);
         Mockito.when(session.getAttribute(PLANET)).thenReturn("MOON");
-        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
-//        Mockito.when(session.getAttribute(LAST_SPEECH)).thenReturn("blah");
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+//        Mockito.when(session.getAttribute(LAST_TELLME_SPEECH)).thenReturn("blah");
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(),
                 buildSlotsMap("year", "1120")), session);
 //        Mockito.verify(session).setAttribute(BIRTH_DATE_CONFIRMED, Boolean.TRUE);
@@ -253,7 +253,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("21:20");
-        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
         assertEquals(DOUBLE_CHECK_PLACE, astrologerResponder.respondToIntent(
                 Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(
                         buildSlotsMap("place", "moscow")).build(), session).getCard().getTitle());

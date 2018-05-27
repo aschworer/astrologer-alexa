@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @author aschworer
@@ -38,11 +38,15 @@ public abstract class Speaker {
         return speak(cardName, messages.getString(cardName), false);
     }
 
+    protected SpeechletResponse repeatedSpeech(String cardName) {
+        return speak(cardName, messages.getString(cardName), false);
+    }
+
     protected SpeechletResponse speakAndFinish(String cardName, String... args) {
         return speak(cardName, MessageFormat.format(messages.getString(cardName), args), true);
     }
 
-    protected SpeechletResponse lastSpeech(String cardName, String lastSaid) {
+    protected SpeechletResponse repeat(String cardName, String lastSaid) {
         return speak(cardName, lastSaid, false);
     }
 
