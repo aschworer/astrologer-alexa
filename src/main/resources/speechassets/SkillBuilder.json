@@ -36,7 +36,8 @@
             "chart",
             "give me a chart",
             "get me a chart",
-            "natal chart"
+            "natal chart",
+            "read the full chart"
           ]
         },
         {
@@ -61,6 +62,7 @@
             }
           ],
           "samples": [
+            "in {year}",
             "year is {year}",
             "{year}"
           ]
@@ -70,12 +72,12 @@
           "slots": [
             {
               "name": "place",
-              "type": "AMAZON.Country"
+              "type": "AMAZON.US_CITY"
             }
           ],
           "samples": [
-            "born in {place}",
-            "in {place}"
+            "{place}",
+            "city is {place}"
           ]
         },
         {
@@ -87,6 +89,8 @@
             }
           ],
           "samples": [
+            "at {time}",
+            "{time}",
             "the time of birth is {time}",
             "time is {time}",
             "was born at {time}",
@@ -118,6 +122,11 @@
         {
           "name": "Planet",
           "values": [
+            {
+              "name": {
+                "value": "Moon"
+              }
+            },
             {
               "name": {
                 "value": "Mercury"

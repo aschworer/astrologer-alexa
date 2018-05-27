@@ -1,52 +1,44 @@
 package aschworer.astrologer.alexa.service;
 
-import aschworer.astrologer.alexa.service.flatlib.FlatLibBirthDetails;
-import aschworer.astrologer.alexa.service.flatlib.FlatLibService;
+import aschworer.astrologer.alexa.service.flatlib.*;
 import aschworer.astrologer.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
-import static aschworer.astrologer.alexa.handler.responder.charts.Astrologer.ALEXA_DATE_FORMAT;
-import static aschworer.astrologer.alexa.service.flatlib.FlatLibBirthDetails.FLATLIB_DATE_FORMATTER;
+import static aschworer.astrologer.alexa.service.flatlib.FlatLibBirthDetails.*;
 
 /**
  * @author aschworer
  */
 public class ChartsService implements NatalChartsService {
     private static final Logger logger = LoggerFactory.getLogger(ChartsService.class);
-//    private GeocodeLocationService locationService = new GeocodeLocationService();
+    //    private GeocodeLocationService locationService = new GeocodeLocationService();
     //todo merge these 2 classes - ?
     private FlatLibService service = new FlatLibService();
 
     @Override
-    public Sign[] getPlanetSign(Planet planet, LocalDate date, String lat, String lng) throws Exception {
-        return getNatalChart(date, lat, lng).getSign(planet);
+    public Sign[] getPlanetSign(Planet planet, LocalDate date, LocalTime time, String lat, String lng, String timeZoneOffset) throws Exception {
+        return getNatalChart(date, time, lat, lng, timeZoneOffset).getSign(planet);
     }
 
-    public NatalChart getNatalChart(LocalDate date, String lat, String lng) throws Exception {
+    public NatalChart getNatalChart(LocalDate date, LocalTime time, String lat, String lng, String timeZoneOffset) throws Exception {
 //        AstrologerLambdaRequest request = new AstrologerLambdaRequest("loadNewChart");
+
         NatalChart natalChart = new NatalChart();
         Person person = new Person();
         person.setBirthPlace(lat + "," + lng);//todo
-        person.setDob(DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT).format(date));
+        person.setDob(date);
         natalChart.setPerson(person);
 
         FlatLibBirthDetails flatLibBirthDetails = new FlatLibBirthDetails();
         flatLibBirthDetails.setDate(FLATLIB_DATE_FORMATTER.format(date));
-//        if (time != null) {
-//            flatLibBirthDetails.setTime(time);
-//            if (birthLocation != null) flatLibBirthDetails.setTimezone(birthLocation.getTimezoneOffset());
-//        }
-//        if (birthLocation != null && birthLocation.getLng() != null) {
-            flatLibBirthDetails.setLng(lng);
-//        }
-//        if (birthLocation != null && birthLocation.getLat() != null) {
-            flatLibBirthDetails.setLat(lat);
-//        }
+
+        if (time != null) flatLibBirthDetails.setTime(FLATLIB_TIME_FORMATTER.format(time));
+        if (timeZoneOffset != null) flatLibBirthDetails.setTimezone(timeZoneOffset);
+        if (lat != null) flatLibBirthDetails.setLat(lat);
+        if (lng != null) flatLibBirthDetails.setLng(lng);
 
         List<CharacteristicInSign> response = service.invoke(flatLibBirthDetails);
         natalChart.setCharacteristicsInSigns(response);

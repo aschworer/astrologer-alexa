@@ -36,7 +36,7 @@ public class FlatLibService {
     }
 
     private void init() {
-        ResourceBundle config = ResourceBundle.getBundle("lambda");
+        ResourceBundle config = ResourceBundle.getBundle("servicekeys");
         BasicAWSCredentials creds = new BasicAWSCredentials(config.getString("aws.accessKeyId"), config.getString("aws.secretKey"));
         AWSLambda lambda = AWSLambdaClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds)).withRegion(Regions.US_EAST_1).build();
         flatlibLambdaFunction = LambdaInvokerFactory.builder().lambdaClient(lambda).build(FlatLibLambdaFunction.class);

@@ -4,20 +4,20 @@ import aschworer.astrologer.model.NatalChart;
 import aschworer.astrologer.model.Planet;
 import aschworer.astrologer.model.Sign;
 
-import java.time.LocalDate;
+import java.time.*;
 
 /**
  * @author aschworer
  */
 public interface NatalChartsService {
 
-    Sign[] getPlanetSign(Planet planet, LocalDate date, String lat, String lng) throws Exception;
+    Sign[] getPlanetSign(Planet planet, LocalDate date, LocalTime time, String lat, String lng, String timeZoneOffset) throws Exception;
 
 //    NatalChart getNatalChartByDate(Date date) throws Exception;
 
-    NatalChart getNatalChart(LocalDate date, String lat, String lng) throws Exception;
+    NatalChart getNatalChart(LocalDate date, LocalTime time, String lat, String lng, String timeZoneOffset) throws Exception;
 
 //    List<GeoLocation> getLocationsByName(String name);
 
-//    GeoLocation getCountryByName(String place);
+//    GeoLocation getPlaceByName(String place);
 }

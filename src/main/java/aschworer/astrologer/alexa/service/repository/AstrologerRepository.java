@@ -53,14 +53,14 @@ public class AstrologerRepository /*implements NatalChartsService*/ {
         AstrologerLambdaRequest request = new AstrologerLambdaRequest("loadNewChart");//todo new charts only via flatlib
         Person person = new Person();
         person.setBirthPlace(lat + "," + lng);//todo
-        person.setDob(ASTROLOGER_DATE_FORMAT.format(date));
+        person.setDob(date);
         request.setPerson(person);
         AstrologerLambdaResponse response = invoke(request);
         return response.getNatalChart();
     }
 
     private void init() {
-        ResourceBundle config = ResourceBundle.getBundle("lambda");
+        ResourceBundle config = ResourceBundle.getBundle("servicekeys");
         BasicAWSCredentials creds = new BasicAWSCredentials(config.getString("aws.accessKeyId"), config.getString("aws.secretKey"));
         AWSLambda lambda = AWSLambdaClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds)).withRegion("us-east-1").build();
         astrologerLambdaFunction = LambdaInvokerFactory.builder().lambdaClient(lambda).build(AstrologerLambdaFunction.class);

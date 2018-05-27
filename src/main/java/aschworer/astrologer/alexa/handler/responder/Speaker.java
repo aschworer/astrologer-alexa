@@ -42,13 +42,17 @@ public abstract class Speaker {
         return speak(cardName, MessageFormat.format(messages.getString(cardName), args), true);
     }
 
+    protected SpeechletResponse lastSpeech(String cardName, String lastSaid) {
+        return speak(cardName, lastSaid, false);
+    }
+
     private SpeechletResponse speak(String cardName, String speechText, boolean end) {
         SimpleCard card = new SimpleCard();
         card.setTitle(cardName);
         card.setContent(speechText);
         SsmlOutputSpeech speech = new SsmlOutputSpeech();
         speech.setSsml("<speak>" + speechText + "</speak>");
-        log.info("return speech " + speechText);
+//        log.info("return speech " + speechText);
         if (end) {
             return SpeechletResponse.newTellResponse(speech, card);
         } else {
@@ -63,14 +67,15 @@ public abstract class Speaker {
         StringBuilder natalChartSpeech = new StringBuilder();
         for (CharacteristicInSign planetInSign : natalChart.getCharacteristicsInSigns()) {
             Characteristic characteristic = planetInSign.getCharacteristic();
+            String cToString = characteristic.getString();
             if (planetInSign.getSigns().length > 1) {
-                if (!(characteristic instanceof House)) planetWithMultipleSigns.append(characteristic.getString()).append(", ");
-            } else {
+                if (!(characteristic instanceof House)) planetWithMultipleSigns.append(cToString).append(", ");
+            } else if (cToString != null) {
                 if (characteristic.equals(Planet.SUN) ||
                         characteristic.equals(Planet.MOON)) {
                     natalChartSpeech.append("The ");
                 }
-                natalChartSpeech.append(characteristic.getString());
+                natalChartSpeech.append(cToString);
                 natalChartSpeech.append(" is in ");
                 natalChartSpeech.append(planetInSign.toSignRange());
                 natalChartSpeech.append(". ");

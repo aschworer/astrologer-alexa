@@ -8,7 +8,7 @@ public enum AstrologerIntent {
     PLANET_SIGN_INTENT("PlanetSignIntent"),
     FULL_CHART_INTENT("FullChartIntent"),
     BIRTH_DAY_INTENT("BirthDayIntent"),
-    BIRTH_YEAR_INTENT("BirthYearIntent"),
+    BIRTH_YEAR_OR_TIME_INTENT("BirthYearIntent"),
     YES_INTENT("AMAZON.YesIntent"),
     NO_INTENT("AMAZON.NoIntent"),
     BIRTH_TIME_INTENT("BirthTimeIntent"),

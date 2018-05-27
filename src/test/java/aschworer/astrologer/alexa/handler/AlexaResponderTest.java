@@ -1,7 +1,6 @@
 package aschworer.astrologer.alexa.handler;
 
-import aschworer.astrologer.alexa.handler.responder.AlexaIntent;
-import aschworer.astrologer.alexa.handler.responder.charts.*;
+import aschworer.astrologer.alexa.handler.responder.*;
 import com.amazon.speech.slu.Intent;
 import com.amazon.speech.speechlet.Session;
 import com.amazon.speech.speechlet.SpeechletException;
@@ -17,9 +16,9 @@ import static org.junit.Assert.assertEquals;
  * @author aschworer
  */
 @RunWith(MockitoJUnitRunner.class)
-public class StandardAlexaResponderTest {
+public class AlexaResponderTest {
 
-    private NatalChartAlexaResponder natalChartAlexaResponder = new NatalChartAlexaResponder();
+    private AlexaResponder astrologerResponder = new AlexaResponder();
 
     @Mock
     private Session session;
@@ -40,8 +39,8 @@ public class StandardAlexaResponderTest {
         assertEquals(SpokenCards.HELP, getResponseCardTitleForIntentName(AlexaIntent.AMAZON_HELP_INTENT.getName()));
     }
 
-    private String getResponseCardTitleForIntentName(String intentName) throws SpeechletException {
-        return natalChartAlexaResponder.respondToIntent(buildIntent(intentName), session).getCard().getTitle();
+    private String getResponseCardTitleForIntentName(String intentName) {
+        return astrologerResponder.respondToIntent(buildIntent(intentName), session).getCard().getTitle();
     }
 
     private Intent buildIntent(String intentName) {

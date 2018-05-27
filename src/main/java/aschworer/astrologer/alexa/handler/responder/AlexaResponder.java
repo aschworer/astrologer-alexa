@@ -1,22 +1,63 @@
 package aschworer.astrologer.alexa.handler.responder;
 
-import com.amazon.speech.slu.Intent;
-import com.amazon.speech.speechlet.Session;
-import com.amazon.speech.speechlet.SpeechletResponse;
+import aschworer.astrologer.alexa.handler.responder.charts.*;
+import com.amazon.speech.slu.*;
+import com.amazon.speech.speechlet.*;
+import org.slf4j.*;
+
+import static aschworer.astrologer.alexa.handler.responder.charts.AstrologerIntent.*;
 
 /**
  * @author aschworer
  */
-public interface AlexaResponder {
+public class AlexaResponder extends Speaker {
 
-    SpeechletResponse greet();
+    private static final Logger log = LoggerFactory.getLogger(AlexaResponder.class);
+    private AstrologerResponder responder;
 
-    SpeechletResponse respondToIntent(Intent intent, Session session);
+    public SpeechletResponse respondToIntent(Intent intent, Session session) {
+        switch (AlexaIntent.getByName(intent.getName())) {
+            case AMAZON_HELP_INTENT:
+                return help();
+            case AMAZON_STOP_INTENT:
+                return stop();
+            case AMAZON_CANCEL_INTENT:
+                return cancel();
+            default:
+                return respondToCustomIntent(intent, session);
+        }
+    }
 
-    SpeechletResponse help();
+    public SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
+        log.info(intent.getName());
+        SessionDetails sessionDetails = new SessionDetails(session);
 
-    SpeechletResponse stop();
+        AstrologerIntent currentIntent = AstrologerIntent.getByName(intent.getName());
+        AstrologerIntent initialIntent = AstrologerIntent.getByName(sessionDetails.getInitialIntent().getName());
+        if (SUN_SIGN_INTENT.equals(currentIntent) || SUN_SIGN_INTENT.equals(initialIntent)) {
+            responder = new SunSignResponder(sessionDetails);
+        } else if (PLANET_SIGN_INTENT.equals(currentIntent) || PLANET_SIGN_INTENT.equals(initialIntent)) {
+            responder = new PlanetInSignResponder(sessionDetails);
+        } else if (FULL_CHART_INTENT.equals(currentIntent) || FULL_CHART_INTENT.equals(initialIntent)) {
+            responder = new ChartResponder(sessionDetails);
+        }
+        return responder.handle(intent, sessionDetails);
+    }
 
-    SpeechletResponse cancel();
+    public SpeechletResponse greet() {
+        return ask(SpokenCards.WELCOME);
+    }
+
+    public SpeechletResponse help() {
+        return ask(SpokenCards.HELP);
+    }
+
+    public SpeechletResponse stop() {
+        return speakAndFinish(SpokenCards.STOP);
+    }
+
+    public SpeechletResponse cancel() {
+        return speakAndFinish(SpokenCards.CANCEL);
+    }
 
 }
