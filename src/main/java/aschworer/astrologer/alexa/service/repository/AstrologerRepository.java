@@ -70,8 +70,8 @@ public class AstrologerRepository /*implements NatalChartsService*/ {
         try {
             log.info("\n\n\n--------------------------------------Lambda request : " + astrologerLambdaRequest + "\n\n\n");
             Object response = astrologerLambdaFunction.invoke(astrologerLambdaRequest);
-            Gson gson = new GsonBuilder().registerTypeAdapter(Characteristic.class, new InterfaceAdapter<Characteristic>()).
-                    registerTypeAdapter(Sign[].class, new SignDeserializer()).
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(Sign[].class, new SignsAdapter()).
                     create();
             String json = gson.toJson(response, LinkedHashMap.class);
             AstrologerLambdaResponse astrologerLambdaResponse = gson.fromJson(json, AstrologerLambdaResponse.class);

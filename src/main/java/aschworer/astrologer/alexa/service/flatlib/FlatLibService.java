@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
-import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -46,9 +44,8 @@ public class FlatLibService {
         try {
             log.info("\n\n\n--------------------------------------Lambda request - flatLibBirthDetails: " + flatLibBirthDetails + "\n\n\n");
             Object response = flatlibLambdaFunction.getNatalChart(flatLibBirthDetails);
-            Gson gson = new GsonBuilder().registerTypeAdapter(Characteristic.class, new InterfaceAdapter<Characteristic>()).
-                    registerTypeAdapter(Sign[].class, new SignDeserializer()).
-                    registerTypeAdapter(Sign[].class, new SignSerializer()).//todo probably no need
+            Gson gson = new GsonBuilder().
+                    registerTypeAdapter(Sign[].class, new SignsAdapter()).
                     create();
             String json = gson.toJson(response, ArrayList.class);
             Type listType = new TypeToken<ArrayList<CharacteristicInSign>>(){}.getType();
