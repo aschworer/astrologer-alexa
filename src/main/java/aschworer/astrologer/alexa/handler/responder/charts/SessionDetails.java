@@ -21,13 +21,15 @@ public class SessionDetails {
     public static final String LAST_SPOKEN_CARD = "lastSpokenCard";
     public static final String LAST_SPOKEN_SPEECH = "lastSpokenSpeech";
 
+    public static final String UNKNOWN = "Unknown";
+
     private Session session;
 
     public SessionDetails(Session session) {
         this.session = session;
     }
 
-    void setYear(String year) {
+    void setBirthYear(String year) {
         session.setAttribute(BIRTH_YEAR, year);
     }
 

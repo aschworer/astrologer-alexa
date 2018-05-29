@@ -6,10 +6,8 @@ import com.amazon.speech.slu.*;
 import com.amazon.speech.speechlet.*;
 import org.slf4j.*;
 
-import java.text.*;
 import java.time.*;
 import java.time.format.*;
-import java.util.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
@@ -18,7 +16,6 @@ import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
  */
 public abstract class AstrologerResponder extends Speaker {
 
-    public static final String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
     static final String SAY_AS_DATE = "<say-as interpret-as=\"date\">%s</say-as>";
     static final String ALEXA_DATE_FORMAT = "yyyy-MM-dd";
     static final String ALEXA_TIME_FORMAT = "HH:mm";
@@ -45,7 +42,8 @@ public abstract class AstrologerResponder extends Speaker {
             case BIRTH_YEAR_OR_TIME_INTENT:
                 final String slotValue = intent.getSlot("year").getValue();
                 if (session.isAskingForBirthYear()) {
-                    if (!CURRENT_YEAR.equalsIgnoreCase(slotValue)) session.setYear(slotValue);//todo add next year too
+                    session.setBirthDate(adjustDateWithYear(slotValue, session.getBirthDate()));
+                    session.setBirthYear(slotValue);
                     return doubleCheckDate(session);
                 } else if (session.isAskingForBirthTime()) {
                     //                if (session.isBirthDateConfirmed()) {//must be birth time
@@ -80,14 +78,35 @@ public abstract class AstrologerResponder extends Speaker {
         }
     }
 
+    private String adjustDateWithYear(String slotValue, String date) {
+        if (slotValue != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(slotValue)) {
+            return slotValue + date.substring(date.indexOf("-"), date.length());
+        }
+        return date;
+    }
+
     protected SpeechletResponse respondToBirthDay(SessionDetails session) {
-        String birthDate = session.getBirthDate();
-        LocalDate parsedDate = LocalDate.parse(birthDate, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
-        if (birthDate.startsWith(CURRENT_YEAR) || parsedDate.isAfter(LocalDate.now())) {
-            return askForBirthDateYear();
+        LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
+        //! - if the year in the date comes as current year or next year, then 2 options
+        // user didnt mention any year. in this case need to ask
+        // user actually meant this year or next year. in this case no need to double check, but not sure how to implement this at the moment
+        // so fow now leave as is - always double check the year if current
+        if (withinAYearFromNow(parsedDate)) {
+            return askForBirthYear();
         } else {
             return doubleCheckDate(session);
         }
+    }
+
+    protected boolean withinAYearFromNow(LocalDate date) {
+        LocalDate withinAYear = LocalDate.of(LocalDate.now().getYear() + 1, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth());
+        return (date.isBefore(withinAYear) && date.isAfter(LocalDate.now())) || date.isEqual(LocalDate.now());
+    }
+
+    public static void main(String[] args) {
+        LocalDate date1 = LocalDate.now();
+        LocalDate date2 = LocalDate.now();
+        System.out.println(date1.isEqual(date2));
     }
 
     /**
@@ -97,15 +116,7 @@ public abstract class AstrologerResponder extends Speaker {
      * ELSE goto get a year (replace 2015 with new one if present), and then confirm
      */
     private SpeechletResponse doubleCheckDate(SessionDetails session) {
-        String date = session.getBirthDate();
-        String year = session.getBirthYear();
-        log.info("double check the birthDate - " + date);
-        log.info("double check the birthDate. year - " + year);
-        if (date.startsWith(CURRENT_YEAR)) {
-            date = year + date.substring(date.indexOf("-"), date.length());
-            session.setBirthDate(date);
-        }
-        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, date));
+        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, session.getBirthDate()));
     }
 
     private SpeechletResponse respondToBirthPlace(SessionDetails session, String place) {
@@ -128,7 +139,7 @@ public abstract class AstrologerResponder extends Speaker {
     }
 
 
-    private SpeechletResponse askForBirthDateYear() {
+    private SpeechletResponse askForBirthYear() {
         return ask(TELL_ME_BIRTH_YEAR);
     }
 

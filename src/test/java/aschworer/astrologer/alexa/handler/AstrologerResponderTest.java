@@ -12,10 +12,11 @@ import org.junit.runner.*;
 import org.mockito.*;
 import org.mockito.runners.*;
 
+import java.time.*;
 import java.util.*;
 
-import static aschworer.astrologer.alexa.handler.responder.charts.SessionDetails.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.AstrologerIntent.*;
+import static aschworer.astrologer.alexa.handler.responder.charts.SessionDetails.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.*;
@@ -29,6 +30,7 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AstrologerResponderTest extends AlexaResponderTest {
 
+    private static final String CURRENT_YEAR = String.valueOf(LocalDate.now().getYear());
     private AlexaResponder astrologerResponder = new AlexaResponder();
 
     @Mock
@@ -81,7 +83,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     public void testBirthDateOnSunSignIntentYearMissing() throws Exception {
-        String date = AstrologerResponder.CURRENT_YEAR + "-11-20";
+        String date = CURRENT_YEAR + "-11-20";
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
@@ -94,7 +96,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     @Test
     //no lambda involved
     public void testBirthDateIntentYearMissing() throws Exception {
-        String date = AstrologerResponder.CURRENT_YEAR + "-11-20";
+        String date = CURRENT_YEAR + "-11-20";
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
@@ -143,14 +145,14 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     //lambda involved
     public void testConfirmBirthDateIntent_OnSunSign_NoYear() throws Exception {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(AstrologerResponder.CURRENT_YEAR + "-11-29");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(CURRENT_YEAR + "-11-29");
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
         final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(YES_INTENT.getName()).build(), session);
         assertEquals(SPEAK_PLANET_SIGN, response.getCard().getTitle());
         assertTrue(response.getNullableShouldEndSession());
         assertResponseMentionSigns(response);
         assertTrue(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("29"));
-        assertFalse(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains(AstrologerResponder.CURRENT_YEAR));
+        assertFalse(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains(CURRENT_YEAR));
     }
 
     @Test

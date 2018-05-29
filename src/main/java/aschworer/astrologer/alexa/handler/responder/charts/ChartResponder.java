@@ -28,12 +28,7 @@ public class ChartResponder extends AstrologerResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
-            String date = session.getBirthDate();
-            if (date == null) {
-                return askForBirthTime();
-            }
             session.setBirthDateConfirmed();
-
             String time = session.getBirthTime();
             LocalTime parsedTime;
             if (time == null) {
@@ -47,9 +42,9 @@ public class ChartResponder extends AstrologerResponder {
                 return askForBirthPlace();
             }
 
-            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
+            LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
 
-            return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, String.format(SAY_AS_DATE, date) + " born in " + place + " at " + time,
+            return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, String.format(SAY_AS_DATE, session.getBirthDate()) + " in " + place + " at " + time,
                     getNatalChartAsString(service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset())));
         } catch (ParseException e) {
             return repeatedSpeech("InvalidDate");//todo

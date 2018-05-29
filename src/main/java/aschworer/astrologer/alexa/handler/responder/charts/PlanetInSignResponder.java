@@ -8,11 +8,9 @@ import org.slf4j.*;
 import java.text.*;
 import java.time.*;
 import java.time.format.*;
-import java.util.*;
 
 @NoArgsConstructor
 public class PlanetInSignResponder extends ChartResponder {
-    public static final String CURRENT_YEAR = new SimpleDateFormat("yyyy").format(new Date());
     private static final Logger log = LoggerFactory.getLogger(PlanetInSignResponder.class);
 
     public PlanetInSignResponder(SessionDetails sessionDetails) {
@@ -40,13 +38,13 @@ public class PlanetInSignResponder extends ChartResponder {
                 return askForBirthPlace();
             } else {
                 //todo setBirthTimeConfirmed, for chart too
-                if (date.startsWith(CURRENT_YEAR) || parsedDate.isAfter(LocalDate.now())) {
+                if (withinAYearFromNow(parsedDate)) {
                     date = formatNoYear(date);
                 }
                 String placeAndTimeOfBirth = (place != null) ? " in " + place : "";
                 placeAndTimeOfBirth = placeAndTimeOfBirth + ((session.getBirthTime() != null) ? " at " + session.getBirthTime() : "");
                 return speakAndFinish(SpokenCards.SPEAK_PLANET_SIGN, session.getPlanet().toString(), String.format(SAY_AS_DATE, date) +
-                        placeAndTimeOfBirth, planetInSign[0].toString());//todo
+                        placeAndTimeOfBirth, planetInSign[0].toString());//todo if at this point still more than one - error
             }
         } catch (ParseException e) {
             return repeatedSpeech("InvalidDate");
