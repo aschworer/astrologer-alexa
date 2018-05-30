@@ -18,8 +18,8 @@ import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 public abstract class AstrologerResponder extends Speaker {
 
     static final String SAY_AS_DATE = "<say-as interpret-as=\"date\">%s</say-as>";
-    static final String ALEXA_DATE_FORMAT = "yyyy-MM-dd";
-    static final String ALEXA_TIME_FORMAT = "HH:mm";
+    static final DateTimeFormatter ALEXA_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
+    static final DateTimeFormatter ALEXA_TIME_FORMATTER = DateTimeFormatter.ISO_TIME.withResolverStyle(ResolverStyle.STRICT);
     private static final Logger log = LoggerFactory.getLogger(AstrologerResponder.class);
     private GoogleLocationService locationService = new GoogleLocationService();
 
@@ -29,12 +29,27 @@ public abstract class AstrologerResponder extends Speaker {
         System.out.println(date1.isEqual(date2));
     }
 
+    static LocalTime getLocalTime(String time) {
+        LocalTime parsedTime;
+        if ("EV".equalsIgnoreCase(time)) {
+            parsedTime = LocalTime.of(21, 0);
+        } else if ("MO".equalsIgnoreCase(time)) {
+            parsedTime = LocalTime.of(9, 0);
+        } else if ("NI".equalsIgnoreCase(time)) {
+            parsedTime = LocalTime.of(3, 0);
+        } else if ("AF".equalsIgnoreCase(time)) {
+            parsedTime = LocalTime.of(15, 0);
+        } else {
+            parsedTime = LocalTime.parse(time, ALEXA_TIME_FORMATTER);
+        }
+        return parsedTime;
+    }
+
     public abstract SpeechletResponse respondToInitialIntent(SessionDetails session);
 
     public SpeechletResponse handle(Intent intent, SessionDetails session) {
         log.info(intent.getName());
         log.info(session.toString());
-        //return respondToInitialIntent(intent, session) todo remove all that from here and move to custom responders
         switch (AstrologerIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
                 if (SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
@@ -69,8 +84,7 @@ public abstract class AstrologerResponder extends Speaker {
                     session.setBirthDate(adjustDateWithYear(slotValue, session.getBirthDate()));
                     return doubleCheckDate(session);
                 } else if (session.isAskingForBirthTime()) {
-                    LocalTime parsedTime = LocalTime.parse(slotValue, DateTimeFormatter.ofPattern("HHmm"));//todo ????
-                    session.setBirthTime(DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).format(parsedTime));
+                    session.setBirthTime(slotValue);
                     return respondToInitialIntent(session);
                 } else {
                     //repeat last said
@@ -111,7 +125,6 @@ public abstract class AstrologerResponder extends Speaker {
             case NO_INTENT:
                 //repeat last question
                 return repeat(session.getLastTellMeCard(), session.getLastTellMeSpeech());
-//                return respondToNo(session);
             default:
                 //repeat last said
                 return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
@@ -126,7 +139,7 @@ public abstract class AstrologerResponder extends Speaker {
     }
 
     protected SpeechletResponse respondToBirthDay(SessionDetails session) {
-        LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
+        LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), ALEXA_DATE_FORMATTER);
         //! - if the year in the date comes as current year or next year, then 2 options
         // user didnt mention any year. in this case need to ask
         // user actually meant this year or next year. in this case no need to double check, but not sure how to implement this at the moment

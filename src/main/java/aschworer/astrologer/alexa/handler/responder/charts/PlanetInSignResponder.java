@@ -7,7 +7,6 @@ import org.slf4j.*;
 
 import java.text.*;
 import java.time.*;
-import java.time.format.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
@@ -23,9 +22,8 @@ public class PlanetInSignResponder extends ChartResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
-//            session.setBirthDateConfirmed();
             String date = session.getBirthDate();
-            LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
+            LocalDate parsedDate = LocalDate.parse(date, ALEXA_DATE_FORMATTER);
             if (withinAYearFromNow(parsedDate)) date = formatNoYear(date);
 
             String born = String.format(SAY_AS_DATE, date);
@@ -36,7 +34,7 @@ public class PlanetInSignResponder extends ChartResponder {
             String time = session.getBirthTime();
             LocalTime parsedTime = null;
             if (time != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
-                parsedTime = LocalTime.parse(time, DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).withResolverStyle(ResolverStyle.STRICT));
+                parsedTime = getLocalTime(time);
                 born = born + " at " + time;
             }
 

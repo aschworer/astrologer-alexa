@@ -7,10 +7,9 @@ import org.slf4j.*;
 
 import java.text.*;
 import java.time.*;
-import java.time.format.*;
 import java.util.*;
 
-import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.CHART_ERROR;
+import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
 @NoArgsConstructor
 public class ChartResponder extends AstrologerResponder {
@@ -30,7 +29,7 @@ public class ChartResponder extends AstrologerResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
-            LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
+            LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), ALEXA_DATE_FORMATTER);
             String born = String.format(SAY_AS_DATE, session.getBirthDate());
 
             String place = session.getBirthPlace();
@@ -43,7 +42,7 @@ public class ChartResponder extends AstrologerResponder {
             if (time == null) {
                 return askForBirthTime();
             } else if (!SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
-                parsedTime = LocalTime.parse(time, DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).withResolverStyle(ResolverStyle.STRICT));
+                parsedTime = getLocalTime(time);
                 born = born + " at " + time;
             }
             return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, born,

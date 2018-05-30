@@ -208,7 +208,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         final String place = "Boston";
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
-        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("20:56");
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("EV");
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(place);
         Mockito.when(session.getAttribute(BIRTH_LAT)).thenReturn("+33.33");
         Mockito.when(session.getAttribute(BIRTH_LNG)).thenReturn("-33.33");
