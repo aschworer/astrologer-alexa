@@ -20,4 +20,7 @@ public interface SpokenCards {
 
     String SPEAK_PLANET_SIGN = "PlanetSign";
     String SPEAK_NATAL_CHART = "NatalChart";
+
+    String MORE_DATA_REQUIRED = "MoreDataNeeded";
+    String CHART_ERROR = "NatalChartError";
 }

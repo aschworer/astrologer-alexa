@@ -29,10 +29,6 @@ public class SessionDetails {
         this.session = session;
     }
 
-    void setBirthYear(String year) {
-        session.setAttribute(BIRTH_YEAR, year);
-    }
-
     public Planet getPlanet() {
         return Planet.getByString((String) session.getAttribute(PLANET));//todo can i just put Planet obj?
     }
@@ -85,6 +81,10 @@ public class SessionDetails {
         return SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
+    public boolean isAskingForBirthDay() {
+        return SpokenCards.TELL_ME_BIRTH_DAY.equals(session.getAttribute(LAST_TELLME_CARD));
+    }
+
     public String getBirthDate() {
         return (String) session.getAttribute(BIRTH_DATE);
     }
@@ -103,6 +103,10 @@ public class SessionDetails {
 
     public String getBirthYear() {
         return (String) session.getAttribute(BIRTH_YEAR);
+    }
+
+    void setBirthYear(String year) {
+        session.setAttribute(BIRTH_YEAR, year);
     }
 
     public String getBirthPlace() {
@@ -137,22 +141,12 @@ public class SessionDetails {
         session.setAttribute(BIRTH_LNG, lng);
     }
 
-    public Boolean isBirthDateConfirmed() {
-        Object attribute = session.getAttribute(BIRTH_DATE_CONFIRMED);
-        return (attribute == null) ? Boolean.FALSE : (Boolean) attribute;
-    }
-
-    public void setBirthDateConfirmed() {
-        session.setAttribute(BIRTH_DATE_CONFIRMED, Boolean.TRUE);
-    }
-
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder("Session: \n");
         result.append("intent: ").append(getInitialIntent()).append("\n");
         result.append("last speech: ").append((getLastTellMeCard() == null) ? "none" : getLastTellMeCard()).append("\n");
         result.append("b-date: ").append(getBirthDate()).append("\n");
-        result.append("b-date confirmed: ").append(isBirthDateConfirmed()).append("\n");
         result.append("b-year: ").append(getBirthYear()).append("\n");
         result.append("b-time: ").append(getBirthTime()).append("\n");
         result.append("b-place: ").append(getBirthPlace()).append("\n");
@@ -160,7 +154,6 @@ public class SessionDetails {
         result.append("lat: ").append(getBirthLat()).append("\n");
         result.append("lng: ").append(getBirthLng()).append("\n");
         result.append("planet: ").append(getPlanet());
-
         return result.toString();
     }
 

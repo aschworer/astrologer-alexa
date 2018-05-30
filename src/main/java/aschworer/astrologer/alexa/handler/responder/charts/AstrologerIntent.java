@@ -13,6 +13,7 @@ public enum AstrologerIntent {
     NO_INTENT("AMAZON.NoIntent"),
     BIRTH_TIME_INTENT("BirthTimeIntent"),
     BIRTH_PLACE_INTENT("BirthPlaceIntent"),
+    I_DONT_KNOW_INTENT("IDontKnowIntent"),
     NA("NA");
 
     private String name;

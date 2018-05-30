@@ -9,6 +9,8 @@ import java.text.*;
 import java.time.*;
 import java.time.format.*;
 
+import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
+
 @NoArgsConstructor
 public class PlanetInSignResponder extends ChartResponder {
     private static final Logger log = LoggerFactory.getLogger(PlanetInSignResponder.class);
@@ -21,36 +23,42 @@ public class PlanetInSignResponder extends ChartResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
+//            session.setBirthDateConfirmed();
             String date = session.getBirthDate();
-            String place = session.getBirthPlace();
             LocalDate parsedDate = LocalDate.parse(date, DateTimeFormatter.ofPattern(ALEXA_DATE_FORMAT));
-            session.setBirthDateConfirmed();
+            if (withinAYearFromNow(parsedDate)) date = formatNoYear(date);
+
+            String born = String.format(SAY_AS_DATE, date);
+
+            String place = session.getBirthPlace();
+            if (place != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(place)) born = born + " in " + place;
+
+            String time = session.getBirthTime();
             LocalTime parsedTime = null;
-            if (session.getBirthTime() != null) {
-                parsedTime = LocalTime.parse(session.getBirthTime(), DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).withResolverStyle(ResolverStyle.STRICT));
+            if (time != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
+                parsedTime = LocalTime.parse(time, DateTimeFormatter.ofPattern(ALEXA_TIME_FORMAT).withResolverStyle(ResolverStyle.STRICT));
+                born = born + " at " + time;
             }
+
             Sign[] planetInSign = service.getPlanetSign(session.getPlanet(), parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset());
 
-            if (planetInSign.length > 1 && parsedTime == null) {
-                //check if birth time present
-                return askForBirthTime();
-            } else if (planetInSign.length > 1 && place == null) {
-                return askForBirthPlace();
-            } else {
-                //todo setBirthTimeConfirmed, for chart too
-                if (withinAYearFromNow(parsedDate)) {
-                    date = formatNoYear(date);
+            if (planetInSign.length > 1) {
+                if (time == null) {
+                    return askForBirthTime();
+                } else if (place == null) {
+                    return askForBirthPlace();
+                } else {
+                    return speakAndFinish(SpokenCards.MORE_DATA_REQUIRED, "time and place of birth");
                 }
-                String placeAndTimeOfBirth = (place != null) ? " in " + place : "";
-                placeAndTimeOfBirth = placeAndTimeOfBirth + ((session.getBirthTime() != null) ? " at " + session.getBirthTime() : "");
-                return speakAndFinish(SpokenCards.SPEAK_PLANET_SIGN, session.getPlanet().toString(), String.format(SAY_AS_DATE, date) +
-                        placeAndTimeOfBirth, planetInSign[0].toString());//todo if at this point still more than one - error
+            } else {
+                return speakAndFinish(SpokenCards.SPEAK_PLANET_SIGN, session.getPlanet().toString(), born, planetInSign[0].toString());
             }
+
         } catch (ParseException e) {
             return repeatedSpeech("InvalidDate");
         } catch (Exception e) {
             log.error("error", e);
-            return repeatedSpeech("NatalChartError");
+            return repeatedSpeech(CHART_ERROR);
         }
     }
 }

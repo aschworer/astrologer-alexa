@@ -98,6 +98,16 @@
           ]
         },
         {
+          "name": "IDontKnowIntent",
+          "slots": [],
+          "samples": [
+            "I don't know",
+            "don't know",
+            "no idea",
+            "I have no idea"
+          ]
+        },
+        {
           "name": "AMAZON.CancelIntent",
           "samples": []
         },

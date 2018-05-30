@@ -30,11 +30,26 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AstrologerResponderTest extends AlexaResponderTest {
 
+    public static final Intent I_DONT_KNOW_INTENT = Intent.builder().withName(AstrologerIntent.I_DONT_KNOW_INTENT.getName()).build();
+    public static final String DATE_20_04_1987 = "1987-04-20";
+    private static final Intent BIRTH_YEAR_INTENT_1986 = buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(), buildSlotsMap("year", "1986"));
     private static final String CURRENT_YEAR = String.valueOf(LocalDate.now().getYear());
     private AlexaResponder astrologerResponder = new AlexaResponder();
 
     @Mock
     private Session session;
+
+    private static HashMap<String, Slot> buildSlotsMap(String name, String value) {
+        HashMap<String, Slot> slots = new HashMap<>();
+        slots.put(name, Slot.builder()
+                .withName(name)
+                .withValue(value).build());
+        return slots;
+    }
+
+    private static Intent buildIntentWithSlots(String intentName, HashMap<String, Slot> slots) {
+        return Intent.builder().withName(intentName).withSlots(slots).build();
+    }
 
     @Before
     public void init() {
@@ -45,7 +60,8 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testNatalChartIntent() throws Exception {
+    public void testNatalChartIntent() {
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WELCOME);
         final SpeechletResponse speechletResponse = astrologerResponder.respondToIntent(buildIntent(FULL_CHART_INTENT.getName()), session);
         assertEquals(TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
         assertFalse(speechletResponse.getNullableShouldEndSession());
@@ -54,7 +70,8 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testMoonSignIntent() throws Exception {
+    public void testMoonSignIntent() {
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WELCOME);
         final SpeechletResponse speechletResponse = astrologerResponder.respondToIntent(buildIntentWithSlots(PLANET_SIGN_INTENT.getName(), buildSlotsMap("planet", "Moon")), session);
         assertEquals(TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
         assertFalse(speechletResponse.getNullableShouldEndSession());
@@ -63,7 +80,8 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testSunSignIntent() throws Exception {
+    public void testSunSignIntent() {
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WELCOME);
         final SpeechletResponse speechletResponse = astrologerResponder.respondToIntent(buildIntent(SUN_SIGN_INTENT.getName()), session);
         assertEquals(TELL_ME_BIRTH_DAY, speechletResponse.getCard().getTitle());
         assertFalse(speechletResponse.getNullableShouldEndSession());
@@ -72,21 +90,33 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testBirthDateIntent() throws Exception {
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
+    public void testSunSignDoubleCheckDate() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
-        final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", "1985-11-20")), session);
-        Mockito.verify(session).setAttribute(BIRTH_DATE, "1985-11-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", DATE_20_04_1987)), session);
+        Mockito.verify(session).setAttribute(BIRTH_DATE, DATE_20_04_1987);
         assertEquals(DOUBLE_CHECK_DATE, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }
 
     @Test
-    public void testBirthDateOnSunSignIntentYearMissing() throws Exception {
+    public void testChartDoubleCheckDate() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
+        assertEquals(DOUBLE_CHECK_DATE, astrologerResponder.respondToIntent(
+                buildIntentWithSlots(BIRTH_DAY_INTENT.toString(), buildSlotsMap("day", DATE_20_04_1987)),
+                session).getCard().getTitle());
+    }
+
+    @Test
+    public void testBirthDateOnSunSignIntentYearMissing() {
         String date = CURRENT_YEAR + "-11-20";
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
         Mockito.verify(session).setAttribute(BIRTH_DATE, date);
         assertEquals(DOUBLE_CHECK_DATE, response.getCard().getTitle());
@@ -95,10 +125,11 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testBirthDateIntentYearMissing() throws Exception {
+    public void testBirthDateIntentYearMissing() {
         String date = CURRENT_YEAR + "-11-20";
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(date);
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
         Mockito.verify(session).setAttribute(BIRTH_DATE, date);
         assertEquals(TELL_ME_BIRTH_YEAR, response.getCard().getTitle());
@@ -107,7 +138,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testDenyDateIntent() throws Exception {
+    public void testDenyDateIntent() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
         final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(NO_INTENT.getName()).build(), session);
@@ -117,11 +148,12 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //no lambda involved
-    public void testBirthYearIntent() throws Exception {
+    public void testBirthYearIntent() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("2015-11-20");
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
-        final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(), buildSlotsMap("year", "1986")), session);
+
+        final SpeechletResponse response = astrologerResponder.respondToIntent(BIRTH_YEAR_INTENT_1986, session);
 //        Mockito.verify(session).setAttribute(BIRTH_YEAR, "1986");
         assertEquals(DOUBLE_CHECK_DATE, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
@@ -129,7 +161,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //lambda involved
-    public void testConfirmBirthDateIntent_OnSunSign_Success() throws Exception {
+    public void testConfirmBirthDateIntentOnSunSignSuccess() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-29");
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
@@ -143,7 +175,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //lambda involved
-    public void testConfirmBirthDateIntent_OnSunSign_NoYear() throws Exception {
+    public void testConfirmBirthDateIntent_OnSunSign_NoYear() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(CURRENT_YEAR + "-11-29");
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
@@ -157,10 +189,10 @@ public class AstrologerResponderTest extends AlexaResponderTest {
 
     @Test
     //lambda involved
-    public void testChartSuccess() throws Exception {
+    public void testChartSuccess() {
         final String place = "Boston";
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1986-04-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("20:56");
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(place);
         Mockito.when(session.getAttribute(BIRTH_LAT)).thenReturn("+33.33");
@@ -170,12 +202,12 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         assertTrue(((SsmlOutputSpeech) response.getOutputSpeech()).getSsml().toLowerCase().contains("house "));
         assertTrue(response.getNullableShouldEndSession());
         assertResponseMentions(response, "in " + place);
-        assertResponseMentions(response, "1986-04-20");
+        assertResponseMentions(response, DATE_20_04_1987);
         assertResponseMentionSigns(response);
     }
 
     @Test
-    public void testChartDoubleCheckPlace() throws Exception {
+    public void testChartDoubleCheckPlace() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
         final String country = "Australia";
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(country);
@@ -187,37 +219,110 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     }
 
     @Test
-    public void testChartBirthTimeRequired() throws Exception {
+    public void testChartBirthTimeAndPlaceRequired() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1986-04-20");
-        final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(YES_INTENT.getName())
-                .build(), session);
-        assertEquals(TELL_ME_BIRTH_TIME, response.getCard().getTitle());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(YES_INTENT.getName()).build(), session);
+        assertEquals(TELL_ME_BIRTH_PLACE, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }
 
     @Test
-    public void testMoonSignMultipleSignsSoBirthTimeRequired() throws Exception {
+    public void testSunSignNoBirthDayResponse() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+    }
+
+    @Test
+    public void testSunSignBirthTimeUnknown() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn(SessionDetails.UNKNOWN);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        Mockito.verify(session).setAttribute(BIRTH_TIME, SessionDetails.UNKNOWN);
+        assertEquals(TELL_ME_BIRTH_PLACE, response.getCard().getTitle());
+        assertFalse(response.getNullableShouldEndSession());
+    }
+
+    @Test
+    public void testSunSignBirthPlaceUnknown() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn(SessionDetails.UNKNOWN);
+        Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(SessionDetails.UNKNOWN);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+    }
+
+    @Test
+    public void testSunSignBirthPlaceUnknownSuccess() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn(SessionDetails.UNKNOWN);
+        Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(SessionDetails.UNKNOWN);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(SPEAK_PLANET_SIGN, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+        assertResponseMentionSigns(response);
+    }
+
+    @Test
+    public void testChartBirthTimeUnknown() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn(SessionDetails.UNKNOWN);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(TELL_ME_BIRTH_PLACE, response.getCard().getTitle());
+        assertFalse(response.getNullableShouldEndSession());
+    }
+
+    @Test
+    public void testChartBirthPlaceUnknown() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
+        Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn(SessionDetails.UNKNOWN);
+        Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(SessionDetails.UNKNOWN);
+        final SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(SPEAK_NATAL_CHART, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+        assertResponseMentionSigns(response);
+    }
+
+    @Test
+    public void testMoonSignMultipleSignsSoBirthTimeRequired() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1986-04-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn("some place");
         Mockito.when(session.getAttribute(BIRTH_LAT)).thenReturn("+33.33");
         Mockito.when(session.getAttribute(BIRTH_LNG)).thenReturn("-33.33");
-        Mockito.when(session.getAttribute(PLANET)).thenReturn("MOON");
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.MOON.getString());
         final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(YES_INTENT.getName()).build(), session);
         assertEquals(TELL_ME_BIRTH_TIME, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }
 
     @Test
-    public void testMoonSignSuccess() throws Exception {
+    public void testMoonSignSuccess() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1986-04-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("21:20");
+        Mockito.when(session.getAttribute(BIRTH_TIMEZONE_OFFSET)).thenReturn("+05:00");
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn("some place");
         Mockito.when(session.getAttribute(BIRTH_LAT)).thenReturn("+33.33");
         Mockito.when(session.getAttribute(BIRTH_LNG)).thenReturn("-33.33");
-        Mockito.when(session.getAttribute(PLANET)).thenReturn("MOON");
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.MOON.getString());
         final SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(YES_INTENT.getName()).build(), session);
         assertEquals(SPEAK_PLANET_SIGN, response.getCard().getTitle());
         assertTrue(response.getNullableShouldEndSession());
@@ -225,12 +330,12 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     }
 
     @Test
-    public void testMoonSignTimeThatLooksLikeYear() throws Exception {
+    public void testMoonSignTimeThatLooksLikeYear() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1986-04-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("11:20");
         Mockito.when(session.getAttribute(BIRTH_DATE_CONFIRMED)).thenReturn(Boolean.TRUE);
-        Mockito.when(session.getAttribute(PLANET)).thenReturn("MOON");
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.MOON.getString());
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_TIME);
 //        Mockito.when(session.getAttribute(LAST_TELLME_SPEECH)).thenReturn("blah");
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(),
@@ -242,18 +347,9 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     }
 
     @Test
-    public void testChartDoubleCheckDate() throws Exception {
+    public void testBirthTimeIntentOnNatalChartBirthPlaceRequired() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
-        assertEquals(DOUBLE_CHECK_DATE, astrologerResponder.respondToIntent(
-                buildIntentWithSlots(BIRTH_DAY_INTENT.toString(), buildSlotsMap("day", "1985-11-20")),
-                session).getCard().getTitle());
-    }
-
-    @Test
-    public void testBirthTimeIntentOnNatalChartBirthPlaceRequired() throws Exception {
-        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-20");
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("21:20");
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
         assertEquals(DOUBLE_CHECK_PLACE, astrologerResponder.respondToIntent(
@@ -261,17 +357,46 @@ public class AstrologerResponderTest extends AlexaResponderTest {
                         buildSlotsMap("place", "moscow")).build(), session).getCard().getTitle());
     }
 
-
-    private HashMap<String, Slot> buildSlotsMap(String name, String value) {
-        HashMap<String, Slot> slots = new HashMap<>();
-        slots.put(name, Slot.builder()
-                .withName(name)
-                .withValue(value).build());
-        return slots;
+    //wrong timing tests
+    @Test
+    public void testBirthPlaceIntentAfterWelcome() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WELCOME);
+        SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(buildSlotsMap("place", "moscow")).build(), session);
+        assertEquals(WELCOME, response.getCard().getTitle());
+        assertFalse(response.getNullableShouldEndSession());
     }
 
-    private Intent buildIntentWithSlots(String intentName, HashMap<String, Slot> slots) {
-        return Intent.builder().withName(intentName).withSlots(slots).build();
+    //not enough info tests
+    @Test
+    public void testChartBirthYearNotGiven() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+    }
+
+    @Test
+    public void testSunSignBirthYearNotGiven() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-29");
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
+        SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(SPEAK_PLANET_SIGN, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
+        assertResponseMentionSigns(response);
+    }
+
+    @Test
+    public void testPlanetSignSignBirthYearNotGiven() {
+        Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.MOON.getString());
+        SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
+        assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());
+        assertTrue(response.getNullableShouldEndSession());
     }
 
     private void assertResponseMentionSigns(SpeechletResponse response) {

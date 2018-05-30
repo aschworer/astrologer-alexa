@@ -17,6 +17,7 @@ import java.util.*;
  * @author aschworer
  */
 public abstract class Speaker {
+//    public static final String LETS_TRY_AGAIN_PREFIX = "Hmm, not sure. Let's try that again. ";
 
     private static final Logger log = LoggerFactory.getLogger(Speaker.class);
     static String[] suffixes =
@@ -86,10 +87,10 @@ public abstract class Speaker {
             }
         }
         if (planetWithMultipleSigns.length() > 0) {
-            natalChartSpeech.append(" Planets that are not mentioned might require more information, like the time and place of birth. ")
+            natalChartSpeech.append(" Planets that are not mentioned might require more information, like the time or place of birth. ")
                     .append("Those include ")
-                    .append(planetWithMultipleSigns)
-                    .append(", Ascendant, Midheaven and other Houses");
+                    .append(planetWithMultipleSigns);
+//                    .append(", Ascendant, Midheaven and other Houses");
         }
         return natalChartSpeech.toString();
     }
