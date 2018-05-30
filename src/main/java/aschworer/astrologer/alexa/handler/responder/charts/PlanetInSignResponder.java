@@ -8,10 +8,12 @@ import org.slf4j.*;
 import java.text.*;
 import java.time.*;
 
+import static aschworer.astrologer.alexa.handler.responder.charts.AlexaDateTimeUtil.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
 @NoArgsConstructor
 public class PlanetInSignResponder extends ChartResponder {
+
     private static final Logger log = LoggerFactory.getLogger(PlanetInSignResponder.class);
 
     public PlanetInSignResponder(SessionDetails sessionDetails) {
@@ -23,7 +25,7 @@ public class PlanetInSignResponder extends ChartResponder {
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
             String date = session.getBirthDate();
-            LocalDate parsedDate = LocalDate.parse(date, ALEXA_DATE_FORMATTER);
+            LocalDate parsedDate = parseDate(session.getBirthDate());
             if (withinAYearFromNow(parsedDate)) date = formatNoYear(date);
 
             String born = String.format(SAY_AS_DATE, date);
@@ -34,7 +36,7 @@ public class PlanetInSignResponder extends ChartResponder {
             String time = session.getBirthTime();
             LocalTime parsedTime = null;
             if (time != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
-                parsedTime = getLocalTime(time);
+                parsedTime = parseTime(time);
                 born = born + " at " + time;
             }
 

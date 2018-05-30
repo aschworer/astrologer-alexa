@@ -143,20 +143,17 @@ public class SessionDetails {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Session: \n");
-        result.append("intent: ").append(getInitialIntent()).append("\n");
-        result.append("last speech: ").append((getLastTellMeCard() == null) ? "none" : getLastTellMeCard()).append("\n");
-        result.append("b-date: ").append(getBirthDate()).append("\n");
-        result.append("b-year: ").append(getBirthYear()).append("\n");
-        result.append("b-time: ").append(getBirthTime()).append("\n");
-        result.append("b-place: ").append(getBirthPlace()).append("\n");
-        result.append("full b-place: ").append(getFullBirthPlace()).append("\n");
-        result.append("lat: ").append(getBirthLat()).append("\n");
-        result.append("lng: ").append(getBirthLng()).append("\n");
-        result.append("planet: ").append(getPlanet());
-        return result.toString();
+        return "Session: \n" + "intent: " + getInitialIntent() + "\n" +
+                "last speech: " + ((getLastTellMeCard() == null) ? "none" : getLastTellMeCard()) + "\n" +
+                "b-date: " + getBirthDate() + "\n" +
+                "b-year: " + getBirthYear() + "\n" +
+                "b-time: " + getBirthTime() + "\n" +
+                "b-place: " + getBirthPlace() + "\n" +
+                "full b-place: " + getFullBirthPlace() + "\n" +
+                "lat: " + getBirthLat() + "\n" +
+                "lng: " + getBirthLng() + "\n" +
+                "planet: " + getPlanet();
     }
-
 
 }
 

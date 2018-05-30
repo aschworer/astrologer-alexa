@@ -6,9 +6,7 @@ import com.amazon.speech.slu.*;
 import com.amazon.speech.speechlet.*;
 import org.slf4j.*;
 
-import java.time.*;
-import java.time.format.*;
-
+import static aschworer.astrologer.alexa.handler.responder.charts.AlexaDateTimeUtil.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.AstrologerIntent.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
@@ -18,32 +16,8 @@ import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 public abstract class AstrologerResponder extends Speaker {
 
     static final String SAY_AS_DATE = "<say-as interpret-as=\"date\">%s</say-as>";
-    static final DateTimeFormatter ALEXA_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
-    static final DateTimeFormatter ALEXA_TIME_FORMATTER = DateTimeFormatter.ISO_TIME.withResolverStyle(ResolverStyle.STRICT);
     private static final Logger log = LoggerFactory.getLogger(AstrologerResponder.class);
     private GoogleLocationService locationService = new GoogleLocationService();
-
-    public static void main(String[] args) {
-        LocalDate date1 = LocalDate.now();
-        LocalDate date2 = LocalDate.now();
-        System.out.println(date1.isEqual(date2));
-    }
-
-    static LocalTime getLocalTime(String time) {
-        LocalTime parsedTime;
-        if ("EV".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(21, 0);
-        } else if ("MO".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(9, 0);
-        } else if ("NI".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(3, 0);
-        } else if ("AF".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(15, 0);
-        } else {
-            parsedTime = LocalTime.parse(time, ALEXA_TIME_FORMATTER);
-        }
-        return parsedTime;
-    }
 
     public abstract SpeechletResponse respondToInitialIntent(SessionDetails session);
 
@@ -81,8 +55,8 @@ public abstract class AstrologerResponder extends Speaker {
                 final String slotValue = intent.getSlot("year").getValue();
                 if (session.isAskingForBirthYear()) {
                     session.setBirthYear(slotValue);
-                    session.setBirthDate(adjustDateWithYear(slotValue, session.getBirthDate()));
-                    return doubleCheckDate(session);
+                    session.setBirthDate(replaceYear(slotValue, session.getBirthDate()));
+                    return confirmBirthDate(session);
                 } else if (session.isAskingForBirthTime()) {
                     session.setBirthTime(slotValue);
                     return respondToInitialIntent(session);
@@ -101,7 +75,7 @@ public abstract class AstrologerResponder extends Speaker {
                 if (session.isAskingForBirthPlace()) {
                     String place = (intent.getSlot("city").getValue() != null) ?
                             intent.getSlot("city").getValue() : intent.getSlot("country").getValue();
-                    return respondToBirthPlace(session, place);
+                    return lookupAndConfirmBirthPlace(session, place);
                 } else {
                     //repeat last said
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
@@ -131,42 +105,24 @@ public abstract class AstrologerResponder extends Speaker {
         }
     }
 
-    private String adjustDateWithYear(String slotValue, String date) {
-        if (slotValue != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(slotValue)) {
-            return slotValue + date.substring(date.indexOf("-"), date.length());
-        }
-        return date;
-    }
-
+    /**
+     * if the year in the date comes as current year or next year, then 2 options
+     * user didnt mention any year. in this case need to ask
+     * user actually meant this year or next year. in this case no need to double check, but not sure how to implement this at the moment
+     * so fow now leave as is - always double check the year if current
+     *
+     * @param session
+     * @return
+     */
     protected SpeechletResponse respondToBirthDay(SessionDetails session) {
-        LocalDate parsedDate = LocalDate.parse(session.getBirthDate(), ALEXA_DATE_FORMATTER);
-        //! - if the year in the date comes as current year or next year, then 2 options
-        // user didnt mention any year. in this case need to ask
-        // user actually meant this year or next year. in this case no need to double check, but not sure how to implement this at the moment
-        // so fow now leave as is - always double check the year if current
-        if (withinAYearFromNow(parsedDate)) {
+        if (withinAYearFromNow(parseDate(session.getBirthDate()))) {
             return askForBirthYear();
         } else {
-            return doubleCheckDate(session);
+            return confirmBirthDate(session);
         }
     }
 
-    boolean withinAYearFromNow(LocalDate date) {
-        LocalDate withinAYear = LocalDate.of(LocalDate.now().getYear() + 1, LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth());
-        return (date.isBefore(withinAYear) && date.isAfter(LocalDate.now())) || date.isEqual(LocalDate.now());
-    }
-
-    /**
-     * Rule -
-     * <p>
-     * If its a SUN sign intent - parse day and month to "20 november" and goto confirm
-     * ELSE goto get a year (replace 2015 with new one if present), and then confirm
-     */
-    private SpeechletResponse doubleCheckDate(SessionDetails session) {
-        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, session.getBirthDate()));
-    }
-
-    private SpeechletResponse respondToBirthPlace(SessionDetails session, String place) {
+    private SpeechletResponse lookupAndConfirmBirthPlace(SessionDetails session, String place) {
         session.setBirthPlace(place);
         try {
             Location location = locationService.getFirstLocationByName(place);
@@ -178,13 +134,18 @@ public abstract class AstrologerResponder extends Speaker {
             log.error("Location retrieval problem: ", e);
             return askForBirthPlace();
         }
-        return doubleCheckPlace(session);
-    }
-
-    private SpeechletResponse doubleCheckPlace(SessionDetails session) {
         return ask(DOUBLE_CHECK_PLACE, session.getFullBirthPlace());
     }
 
+    /**
+     * Rule -
+     * <p>
+     * If its a SUN sign intent - parse day and month to "20 november" and goto confirm
+     * ELSE goto get a year (replace 2015 with new one if present), and then confirm
+     */
+    private SpeechletResponse confirmBirthDate(SessionDetails session) {
+        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, session.getBirthDate()));
+    }
 
     private SpeechletResponse askForBirthYear() {
         return ask(TELL_ME_BIRTH_YEAR);
