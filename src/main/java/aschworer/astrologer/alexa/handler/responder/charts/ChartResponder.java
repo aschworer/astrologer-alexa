@@ -52,7 +52,7 @@ public class ChartResponder extends AstrologerResponder {
             return repeatedSpeech("InvalidDate");//todo
         } catch (Exception e) {
             log.error("error", e);
-            return repeatedSpeech(CHART_ERROR);
+            return speakAndFinish(CHART_ERROR);
         }
     }
 

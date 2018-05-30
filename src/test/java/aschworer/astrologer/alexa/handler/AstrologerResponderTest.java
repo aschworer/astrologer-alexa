@@ -34,10 +34,25 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     public static final String DATE_20_04_1987 = "1987-04-20";
     private static final Intent BIRTH_YEAR_INTENT_1986 = buildIntentWithSlots(BIRTH_YEAR_OR_TIME_INTENT.getName(), buildSlotsMap("year", "1986"));
     private static final String CURRENT_YEAR = String.valueOf(LocalDate.now().getYear());
+    public static final Intent BIRTH_CITY_MOSCOW_INTENT = Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(
+            buildPlaceSlotMap("city", "moscow", "country", null)).build();
+    public static final Intent BIRTH_COUNTRY_FRANCE_INTENT = Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(
+            buildPlaceSlotMap("country", "France", "city", null)).build();
     private AlexaResponder astrologerResponder = new AlexaResponder();
 
     @Mock
     private Session session;
+
+    private static HashMap<String, Slot> buildPlaceSlotMap(String name, String value, String name2, String value2) {
+        HashMap<String, Slot> slots = new HashMap<>();
+        slots.put(name, Slot.builder()
+                .withName(name)
+                .withValue(value).build());
+        slots.put(name2, Slot.builder()
+                .withName(name2)
+                .withValue(value2).build());
+        return slots;
+    }
 
     private static HashMap<String, Slot> buildSlotsMap(String name, String value) {
         HashMap<String, Slot> slots = new HashMap<>();
@@ -213,7 +228,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(country);
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_PLACE_INTENT.getName(),
-                buildSlotsMap(BIRTH_PLACE, country)), session);
+                buildPlaceSlotMap("country", country, "city", null)), session);
         assertEquals(DOUBLE_CHECK_PLACE, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }
@@ -352,9 +367,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("21:20");
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_PLACE);
-        assertEquals(DOUBLE_CHECK_PLACE, astrologerResponder.respondToIntent(
-                Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(
-                        buildSlotsMap("place", "moscow")).build(), session).getCard().getTitle());
+        assertEquals(DOUBLE_CHECK_PLACE, astrologerResponder.respondToIntent(BIRTH_CITY_MOSCOW_INTENT, session).getCard().getTitle());
     }
 
     //wrong timing tests
@@ -362,7 +375,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     public void testBirthPlaceIntentAfterWelcome() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
         Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WELCOME);
-        SpeechletResponse response = astrologerResponder.respondToIntent(Intent.builder().withName(BIRTH_PLACE_INTENT.toString()).withSlots(buildSlotsMap("place", "moscow")).build(), session);
+        SpeechletResponse response = astrologerResponder.respondToIntent(BIRTH_COUNTRY_FRANCE_INTENT, session);
         assertEquals(WELCOME, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }

@@ -9,7 +9,7 @@ import org.slf4j.*;
 import java.time.*;
 import java.time.format.*;
 
-import static aschworer.astrologer.alexa.handler.responder.charts.AstrologerIntent.SUN_SIGN_INTENT;
+import static aschworer.astrologer.alexa.handler.responder.charts.AstrologerIntent.*;
 import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
 
 /**
@@ -85,7 +85,9 @@ public abstract class AstrologerResponder extends Speaker {
                 }
             case BIRTH_PLACE_INTENT:
                 if (session.isAskingForBirthPlace()) {
-                    return respondToBirthPlace(session, intent.getSlot("place").getValue());
+                    String place = (intent.getSlot("city").getValue() != null) ?
+                            intent.getSlot("city").getValue() : intent.getSlot("country").getValue();
+                    return respondToBirthPlace(session, place);
                 } else {
                     //repeat last said
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
@@ -93,7 +95,7 @@ public abstract class AstrologerResponder extends Speaker {
             case I_DONT_KNOW_INTENT:
                 if (session.isAskingForBirthYear()) {
                     session.setBirthYear(SessionDetails.UNKNOWN);
-                    if (SUN_SIGN_INTENT != session.getInitialIntent()){
+                    if (SUN_SIGN_INTENT != session.getInitialIntent()) {
                         return speakAndFinish(MORE_DATA_REQUIRED, "year of birth");
                     }
                 } else if (session.isAskingForBirthTime()) {

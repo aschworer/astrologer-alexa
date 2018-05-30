@@ -71,13 +71,21 @@
           "name": "BirthPlaceIntent",
           "slots": [
             {
-              "name": "place",
+              "name": "city",
               "type": "AMAZON.US_CITY"
+            },
+            {
+              "name": "country",
+              "type": "AMAZON.Country"
             }
           ],
           "samples": [
-            "{place}",
-            "city is {place}"
+            "in {city}",
+            "somewhere in {country}",
+            "in {country}",
+            "{country}",
+            "{city}",
+            "city is {city}"
           ]
         },
         {

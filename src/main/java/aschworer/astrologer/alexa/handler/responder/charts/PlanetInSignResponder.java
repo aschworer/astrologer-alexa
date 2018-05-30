@@ -58,7 +58,7 @@ public class PlanetInSignResponder extends ChartResponder {
             return repeatedSpeech("InvalidDate");
         } catch (Exception e) {
             log.error("error", e);
-            return repeatedSpeech(CHART_ERROR);
+            return speakAndFinish(CHART_ERROR);
         }
     }
 }
