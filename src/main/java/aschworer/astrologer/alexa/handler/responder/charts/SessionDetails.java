@@ -16,11 +16,11 @@ public class SessionDetails {
     public static final String BIRTH_TIME = "time";
     public static final String PLANET = "planet";
     public static final String BIRTH_DATE_CONFIRMED = "birthDateConfirmed";
+    public static final String BIRTH_PLACE_CONFIRMED = "birthPlaceConfirmed";
     public static final String LAST_TELLME_CARD = "lastTellMeCard";
     public static final String LAST_TELLME_SPEECH = "lastTellMeSpeech";
     public static final String LAST_SPOKEN_CARD = "lastSpokenCard";
     public static final String LAST_SPOKEN_SPEECH = "lastSpokenSpeech";
-
     public static final String UNKNOWN = "Unknown";
 
     private Session session;
@@ -117,6 +117,30 @@ public class SessionDetails {
         session.setAttribute(BIRTH_PLACE, place);
     }
 
+    public void setBirthPlaceConfirmed() {
+        session.setAttribute(BIRTH_PLACE_CONFIRMED, Boolean.TRUE);
+    }
+
+    public Boolean isBirthDateConfirmed() {
+        Object attribute = session.getAttribute(BIRTH_DATE_CONFIRMED);
+        if (attribute == null) {
+            return Boolean.FALSE;
+        }
+        return (Boolean) attribute;
+    }
+
+    public void setBirthDateConfirmed() {
+        session.setAttribute(BIRTH_DATE_CONFIRMED, Boolean.TRUE);
+    }
+
+    public Boolean isBirthPlaceConfirmed() {
+        Object attribute = session.getAttribute(BIRTH_PLACE_CONFIRMED);
+        if (attribute == null) {
+            return Boolean.FALSE;
+        }
+        return (Boolean) attribute;
+    }
+
     public String getFullBirthPlace() {
         return (String) session.getAttribute(BIRTH_PLACE_FULLNAME);
     }
@@ -144,11 +168,14 @@ public class SessionDetails {
     @Override
     public String toString() {
         return "Session: \n" + "intent: " + getInitialIntent() + "\n" +
-                "last speech: " + ((getLastTellMeCard() == null) ? "none" : getLastTellMeCard()) + "\n" +
+                "last question: " + ((getLastTellMeSpeech() == null) ? "none" : getLastTellMeSpeech()) + "\n" +
+                "last spoken speech: " + ((getLastSpokenSpeech() == null) ? "none" : getLastSpokenSpeech()) + "\n" +
                 "b-date: " + getBirthDate() + "\n" +
+                "b-date confirmed: " + isBirthDateConfirmed() + "\n" +
                 "b-year: " + getBirthYear() + "\n" +
                 "b-time: " + getBirthTime() + "\n" +
                 "b-place: " + getBirthPlace() + "\n" +
+                "b-place confirmed: " + isBirthDateConfirmed() + "\n" +
                 "full b-place: " + getFullBirthPlace() + "\n" +
                 "lat: " + getBirthLat() + "\n" +
                 "lng: " + getBirthLng() + "\n" +

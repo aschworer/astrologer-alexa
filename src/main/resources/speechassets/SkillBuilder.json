@@ -4,6 +4,52 @@
       "invocationName": "astrologer",
       "intents": [
         {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.YesIntent",
+          "samples": [
+            "yes",
+            "yeah",
+            "yep",
+            "yup",
+            "yes it is",
+            "sure",
+            "looks like it",
+            "guess so",
+            "yeah mate"
+          ]
+        },
+        {
+          "name": "AMAZON.NoIntent",
+          "samples": [
+            "no",
+            "nope",
+            "not sure",
+            "not at all",
+            "don't think so",
+            "nah"
+          ]
+        },
+        {
+          "name": "AMAZON.RepeatIntent",
+          "samples": [
+            "could you repeat please",
+            "what",
+            "say again",
+            "say that again"
+          ]
+        },
+        {
           "name": "SunSignIntent",
           "slots": [],
           "samples": [
@@ -24,6 +70,7 @@
           ],
           "samples": [
             "tell me a {planet} sign",
+            "give me a {planet} sign",
             "get {planet} sign",
             "{planet} sign",
             "sign of {planet}"
@@ -114,35 +161,6 @@
             "no idea",
             "I have no idea"
           ]
-        },
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.YesIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NoIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.RepeatIntent",
-          "samples": [
-            "could you repeat please",
-            "what",
-            "say again",
-            "say that again"
-          ]
         }
       ],
       "types": [
@@ -162,11 +180,6 @@
             {
               "name": {
                 "value": "Venus"
-              }
-            },
-            {
-              "name": {
-                "value": "Earth"
               }
             },
             {

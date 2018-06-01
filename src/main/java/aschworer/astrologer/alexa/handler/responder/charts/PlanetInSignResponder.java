@@ -5,7 +5,6 @@ import com.amazon.speech.speechlet.*;
 import lombok.*;
 import org.slf4j.*;
 
-import java.text.*;
 import java.time.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.AlexaDateTimeUtil.*;
@@ -24,15 +23,16 @@ public class PlanetInSignResponder extends ChartResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
+            //birth date
+            if (!session.isBirthDateConfirmed()) {
+                return askForBirthDate();
+            }
             String date = session.getBirthDate();
             LocalDate parsedDate = parseDate(session.getBirthDate());
             if (withinAYearFromNow(parsedDate)) date = formatNoYear(date);
-
             String born = String.format(SAY_AS_DATE, date);
 
-            String place = session.getBirthPlace();
-            if (place != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(place)) born = born + " in " + place;
-
+            //birth time
             String time = session.getBirthTime();
             LocalTime parsedTime = null;
             if (time != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
@@ -40,6 +40,17 @@ public class PlanetInSignResponder extends ChartResponder {
                 born = born + " at " + time;
             }
 
+            //birth place
+            String place = session.getBirthPlace();
+            if (place != null && !SessionDetails.UNKNOWN.equalsIgnoreCase(place)) {
+                if (session.isBirthPlaceConfirmed()) {
+                    born = born + " in " + ((session.getFullBirthPlace() != null) ? session.getFullBirthPlace() : place);
+                } else {
+                    return askForBirthPlace();
+                }
+            }
+
+            //result
             Sign[] planetInSign = service.getPlanetSign(session.getPlanet(), parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset());
 
             if (planetInSign.length > 1) {
@@ -48,14 +59,17 @@ public class PlanetInSignResponder extends ChartResponder {
                 } else if (place == null) {
                     return askForBirthPlace();
                 } else {
-                    return speakAndFinish(SpokenCards.MORE_DATA_REQUIRED, "time and place of birth");
+                    return speakAndFinish(SpokenCards.MORE_DATA_REQUIRED, getMissingInfoPhrase(place, time));
                 }
             } else {
                 return speakAndFinish(SpokenCards.SPEAK_PLANET_SIGN, session.getPlanet().toString(), born, planetInSign[0].toString());
             }
-
-        } catch (ParseException e) {
-            return repeatedSpeech("InvalidDate");
+        } catch (AlexaDateException e) {
+            log.error("Date parse problem", e);
+            return repeatedSpeech(INVALID_DATE);
+        } catch (AlexaTimeException e) {
+            log.error("Time parse problem", e);
+            return repeatedSpeech(INVALID_TIME);
         } catch (Exception e) {
             log.error("error", e);
             return speakAndFinish(CHART_ERROR);

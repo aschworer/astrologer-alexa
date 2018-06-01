@@ -21,6 +21,11 @@ public class SunSignResponder extends PlanetInSignResponder {
     }
 
     public SpeechletResponse respondToBirthDay(SessionDetails session) {
-        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, formatNoYear(session.getBirthDate())));
+        try {
+            return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, formatNoYear(session.getBirthDate())));
+        } catch (AlexaDateException e) {
+            log.error("Date parse problem", e);
+            return repeatedSpeech(INVALID_DATE);
+        }
     }
 }

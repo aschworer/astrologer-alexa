@@ -7,25 +7,39 @@ public class AlexaDateTimeUtil {
 
     private static final DateTimeFormatter ALEXA_DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
     private static final DateTimeFormatter ALEXA_TIME_FORMATTER = DateTimeFormatter.ISO_TIME.withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter ALEXA_TIME_FORMATTER2 = DateTimeFormatter.ofPattern("HHmm").withResolverStyle(ResolverStyle.STRICT);
 
-    static LocalDate parseDate(String date) {
-        return LocalDate.parse(date, ALEXA_DATE_FORMATTER);
+    public static LocalDate parseDate(String date) throws AlexaDateException {
+        try {
+            return LocalDate.parse(date, ALEXA_DATE_FORMATTER);
+        } catch (Exception e) {
+            throw new AlexaDateException();
+        }
     }
 
-    static LocalTime parseTime(String time) {
-        LocalTime parsedTime;
-        if ("EV".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(21, 0);
-        } else if ("MO".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(9, 0);
-        } else if ("NI".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(3, 0);
-        } else if ("AF".equalsIgnoreCase(time)) {
-            parsedTime = LocalTime.of(15, 0);
-        } else {
-            parsedTime = LocalTime.parse(time, ALEXA_TIME_FORMATTER);
+    static LocalTime parseTime(String time) throws AlexaTimeException {
+        try {
+            LocalTime parsedTime;
+            if ("EV".equalsIgnoreCase(time)) {
+                parsedTime = LocalTime.of(21, 0);
+            } else if ("MO".equalsIgnoreCase(time)) {
+                parsedTime = LocalTime.of(9, 0);
+            } else if ("NI".equalsIgnoreCase(time)) {
+                parsedTime = LocalTime.of(3, 0);
+            } else if ("AF".equalsIgnoreCase(time)) {
+                parsedTime = LocalTime.of(15, 0);
+            } else {
+                parsedTime = LocalTime.parse(time, ALEXA_TIME_FORMATTER);
+            }
+            return parsedTime;
+        } catch (Exception e) {
+            //try another pattern
+            try {
+                return LocalTime.parse(time, ALEXA_TIME_FORMATTER2);
+            } catch (Exception ex) {
+                throw new AlexaTimeException();
+            }
         }
-        return parsedTime;
     }
 
     static boolean withinAYearFromNow(LocalDate date) {

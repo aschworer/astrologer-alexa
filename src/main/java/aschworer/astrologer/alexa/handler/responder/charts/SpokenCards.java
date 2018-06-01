@@ -21,6 +21,8 @@ public interface SpokenCards {
     String SPEAK_PLANET_SIGN = "PlanetSign";
     String SPEAK_NATAL_CHART = "NatalChart";
 
-    String MORE_DATA_REQUIRED = "MoreDataNeeded";
+    String MORE_DATA_REQUIRED = "MoreDataRequired";
     String CHART_ERROR = "NatalChartError";
+    String INVALID_DATE = "InvalidDate";
+    String INVALID_TIME = "InvalidTime";
 }

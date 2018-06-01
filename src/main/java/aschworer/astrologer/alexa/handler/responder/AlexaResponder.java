@@ -28,7 +28,7 @@ public class AlexaResponder extends Speaker {
         }
     }
 
-    public SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
+    SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
         log.info(intent.getName());
         SessionDetails sessionDetails = new SessionDetails(session);
 
@@ -41,7 +41,12 @@ public class AlexaResponder extends Speaker {
         } else if (FULL_CHART_INTENT.equals(currentIntent) || FULL_CHART_INTENT.equals(initialIntent)) {
             responder = new ChartResponder(sessionDetails);
         }
-        return responder.handle(intent, sessionDetails);
+        if (responder == null) {
+            return greet();
+        } else {
+            return responder.handle(intent, sessionDetails);
+        }
+
     }
 
     public SpeechletResponse greet() {

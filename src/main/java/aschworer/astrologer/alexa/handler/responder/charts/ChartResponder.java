@@ -5,7 +5,6 @@ import com.amazon.speech.speechlet.*;
 import lombok.*;
 import org.slf4j.*;
 
-import java.text.*;
 import java.time.*;
 import java.util.*;
 
@@ -31,14 +30,14 @@ public class ChartResponder extends AstrologerResponder {
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
+            //birth date
+            if (!session.isBirthDateConfirmed()) {
+                return askForBirthDate();
+            }
             LocalDate parsedDate = parseDate(session.getBirthDate());
             String born = String.format(SAY_AS_DATE, session.getBirthDate());
 
-            String place = session.getBirthPlace();
-            if (place == null) {
-                return askForBirthPlace();
-            } else if (!SessionDetails.UNKNOWN.equalsIgnoreCase(place)) born = born + " in " + place;
-
+            //birth time
             String time = session.getBirthTime();
             LocalTime parsedTime = null;
             if (time == null) {
@@ -47,14 +46,30 @@ public class ChartResponder extends AstrologerResponder {
                 parsedTime = parseTime(time);
                 born = born + " at " + time;
             }
+
+            //birth place
+            String place = session.getBirthPlace();
+            if (place != null && session.isBirthPlaceConfirmed()) {
+                born = born + " in " + ((session.getFullBirthPlace() != null) ? session.getFullBirthPlace() : place);
+            } else if (!SessionDetails.UNKNOWN.equalsIgnoreCase(place)) {
+                return askForBirthPlace();
+            }
+
+            //give result
             return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, born,
-                    getNatalChartAsString(service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset())));
-        } catch (ParseException e) {
-            return repeatedSpeech("InvalidDate");//todo
+                    getNatalChartAsSpeech(
+                            service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset()),
+                            getMissingInfoPhrase(session.getFullBirthPlace(), time)
+                    ));
+        } catch (AlexaDateException e) {
+            log.error("Date parse problem", e);
+            return repeatedSpeech(INVALID_DATE);
+        } catch (AlexaTimeException e) {
+            log.error("Time parse problem", e);
+            return repeatedSpeech(INVALID_TIME);
         } catch (Exception e) {
             log.error("error", e);
             return speakAndFinish(CHART_ERROR);
         }
     }
-
 }

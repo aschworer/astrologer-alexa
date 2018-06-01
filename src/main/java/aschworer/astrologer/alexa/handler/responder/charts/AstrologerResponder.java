@@ -38,21 +38,26 @@ public abstract class AstrologerResponder extends Speaker {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case PLANET_SIGN_INTENT:
+                String planet = intent.getSlot("planet").getValue();
+                log.info("planet input: " + planet);
                 if (SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
-                    session.setPlanet(intent.getSlot("planet").getValue());
+                    session.setPlanet(planet);
                     return askForBirthDate();
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case BIRTH_DAY_INTENT:
+                String day = intent.getSlot("day").getValue();
+                log.info("birth day input: " + day);
                 if (session.isAskingForBirthDay()) {
-                    session.setBirthDate(intent.getSlot("day").getValue());
+                    session.setBirthDate(day);
                     return respondToBirthDay(session);
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case BIRTH_YEAR_OR_TIME_INTENT:
                 final String slotValue = intent.getSlot("year").getValue();
+                log.info("birth year or time input: " + slotValue);
                 if (session.isAskingForBirthYear()) {
                     session.setBirthYear(slotValue);
                     session.setBirthDate(replaceYear(slotValue, session.getBirthDate()));
@@ -65,16 +70,22 @@ public abstract class AstrologerResponder extends Speaker {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case BIRTH_TIME_INTENT:
+                String time = intent.getSlot("time").getValue();
+                log.info("birth time input: " + time);
                 if (session.isAskingForBirthTime()) {
-                    session.setBirthTime(intent.getSlot("time").getValue());
+                    session.setBirthTime(time);
                     return respondToInitialIntent(session);
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case BIRTH_PLACE_INTENT:
+                String place = (intent.getSlot("city").getValue() != null) ?
+                        intent.getSlot("city").getValue() : intent.getSlot("country").getValue();
+                log.info("place input: " + place);
+                if ("no".equalsIgnoreCase(place)) {//Alexa bug?
+                    return repeat(session.getLastTellMeCard(), session.getLastTellMeSpeech());
+                }
                 if (session.isAskingForBirthPlace()) {
-                    String place = (intent.getSlot("city").getValue() != null) ?
-                            intent.getSlot("city").getValue() : intent.getSlot("country").getValue();
                     return lookupAndConfirmBirthPlace(session, place);
                 } else {
                     //repeat last said
@@ -95,6 +106,11 @@ public abstract class AstrologerResponder extends Speaker {
                 }
                 return respondToInitialIntent(session);
             case YES_INTENT:
+                if (session.isAskingForBirthPlace()) {
+                    session.setBirthPlaceConfirmed();
+                } else if (session.isAskingForBirthDay()) {
+                    session.setBirthDateConfirmed();
+                }
                 return respondToInitialIntent(session);
             case NO_INTENT:
                 //repeat last question
@@ -115,10 +131,14 @@ public abstract class AstrologerResponder extends Speaker {
      * @return
      */
     protected SpeechletResponse respondToBirthDay(SessionDetails session) {
-        if (withinAYearFromNow(parseDate(session.getBirthDate()))) {
-            return askForBirthYear();
-        } else {
-            return confirmBirthDate(session);
+        try {
+            if (withinAYearFromNow(parseDate(session.getBirthDate()))) {
+                return askForBirthYear();
+            } else {
+                return confirmBirthDate(session);
+            }
+        } catch (AlexaDateException e) {
+            return repeatedSpeech(INVALID_DATE);
         }
     }
 
@@ -143,7 +163,7 @@ public abstract class AstrologerResponder extends Speaker {
      * If its a SUN sign intent - parse day and month to "20 november" and goto confirm
      * ELSE goto get a year (replace 2015 with new one if present), and then confirm
      */
-    private SpeechletResponse confirmBirthDate(SessionDetails session) {
+    SpeechletResponse confirmBirthDate(SessionDetails session) {
         return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, session.getBirthDate()));
     }
 
@@ -151,7 +171,7 @@ public abstract class AstrologerResponder extends Speaker {
         return ask(TELL_ME_BIRTH_YEAR);
     }
 
-    private SpeechletResponse askForBirthDate() {
+    SpeechletResponse askForBirthDate() {
         return ask(TELL_ME_BIRTH_DAY);
     }
 
