@@ -1,23 +1,19 @@
 package aschworer.astrologer.alexa.service.flatlib;
 
 import aschworer.astrologer.model.*;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.lambda.AWSLambda;
-import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
-import com.amazonaws.services.lambda.invoke.LambdaFunction;
-import com.amazonaws.services.lambda.invoke.LambdaInvokerFactory;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.amazonaws.auth.*;
+import com.amazonaws.regions.*;
+import com.amazonaws.services.lambda.*;
+import com.amazonaws.services.lambda.invoke.*;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.module.*;
+import com.google.gson.*;
+import com.google.gson.reflect.*;
+import org.slf4j.*;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * @author aschworer
@@ -42,21 +38,36 @@ public class FlatLibService {
 
     public List<CharacteristicInSign> invoke(FlatLibBirthDetails flatLibBirthDetails) throws Exception {
         try {
-            log.info("\n\n\n--------------------------------------Lambda request - flatLibBirthDetails: " + flatLibBirthDetails + "\n\n\n");
+            log.info("\n\n------Lambda request - flatLibBirthDetails: " + flatLibBirthDetails + "\n\n");
+            long startTime = System.currentTimeMillis();
             Object response = flatlibLambdaFunction.getNatalChart(flatLibBirthDetails);
-            Gson gson = new GsonBuilder().
-                    registerTypeAdapter(Sign[].class, new SignsAdapter()).
-                    create();
-            String json = gson.toJson(response, ArrayList.class);
-            Type listType = new TypeToken<ArrayList<CharacteristicInSign>>(){}.getType();
-            List<CharacteristicInSign> natalChart = gson.fromJson(json, listType);
-            log.info("For request - flatLibBirthDetails: " + flatLibBirthDetails);
-            log.info("\n\n\n--------------------------------------Lambda result - natalChart: " + natalChart + "\n\n\n");
+//            List<CharacteristicInSign> natalChart = parseWithJackson(response);
+            List<CharacteristicInSign> natalChart = parseWithGson(response);
+            long endTime = System.currentTimeMillis();
+            log.info("\n\n------Lambda result (took " + (endTime - startTime) + " ms): " + natalChart + "\n\n");
             return natalChart;
         } catch (Exception e) {
             log.error("error: " + e.getMessage());
             throw e;
         }
+    }
+
+    private List<CharacteristicInSign> parseWithGson(Object response) {
+        Gson gson = new GsonBuilder().registerTypeAdapter(Sign[].class, new SignsAdapter()).create();
+        String json = gson.toJson(response, ArrayList.class);
+        Type type = new TypeToken<ArrayList<CharacteristicInSign>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+    private List<CharacteristicInSign> parseWithJackson(Object response) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Sign[].class, new SignsAdapter());
+        module.addDeserializer(Sign[].class, new SignsAdapter.SignsDeserializer());
+        mapper.registerModule(module);
+        return mapper.convertValue(response, new TypeReference<List<CharacteristicInSign>>() {
+        });
     }
 
     interface FlatLibLambdaFunction {

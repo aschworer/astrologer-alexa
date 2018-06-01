@@ -82,7 +82,7 @@ public class SessionDetails {
     }
 
     public boolean isAskingForBirthDay() {
-        return SpokenCards.TELL_ME_BIRTH_DAY.equals(session.getAttribute(LAST_TELLME_CARD));
+        return SpokenCards.TELL_ME_BIRTH_DAY.equals(session.getAttribute(LAST_TELLME_CARD)) || SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
     public String getBirthDate() {

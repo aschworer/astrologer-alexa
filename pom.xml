@@ -14,6 +14,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <disableRequestSignatureCheck>false</disableRequestSignatureCheck>
         <timestampTolerance>150</timestampTolerance>
+        <!--<lambda.functionCode>target/${artifactId}-jar-with-dependencies.jar</lambda.functionCode>-->
+        <!--<lambda.version>${project.version}</lambda.version>-->
+        <!--<lambda.publish>true</lambda.publish>-->
+        <!--<lambda.forceUpdate>true</lambda.forceUpdate>-->
+        <!--<lambda.functionNameSuffix>dev</lambda.functionNameSuffix>-->
     </properties>
 
     <dependencies>
@@ -50,81 +55,36 @@
         </dependency>
 
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-lambda-java-log4j</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.maps</groupId>
             <artifactId>google-maps-services</artifactId>
             <version>0.2.7</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.8.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.20</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-log4j</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.25</version>
-            <scope>provided</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.8.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.8.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.8.6</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-            <!--<artifactId>jackson-core</artifactId>-->
-            <!--<version>2.8.6</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-            <!--<artifactId>jackson-annotations</artifactId>-->
-            <!--<version>2.8.6</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-            <!--<artifactId>jackson-databind</artifactId>-->
-            <!--<version>2.8.6</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -195,6 +155,91 @@
                     </systemProperties>
                 </configuration>
             </plugin>
+
+
+            <!--<plugin>
+                <groupId>com.github.seanroy</groupId>
+                <artifactId>lambda-maven-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <functionCode>${lambda.functionCode}</functionCode>
+                    <version>${lambda.version}</version>
+                    <alias>development</alias>
+                    <vpcSecurityGroupIds>sg-123456</vpcSecurityGroupIds>
+                    <vpcSubnetIds>subnet-123456,subnet-123456,subnet-123456</vpcSubnetIds>
+                    <lambdaRoleArn>arn:aws:iam::1234567:role/YourLambdaS3Role</lambdaRoleArn>
+                    <s3Bucket>mys3bucket</s3Bucket>
+                    <keyPrefix>my/awesome/prefix</keyPrefix>
+                    <publish>${lambda.publish}</publish>
+                    <forceUpdate>${lambda.forceUpdate}</forceUpdate>
+                    <functionNameSuffix>${lambda.functionNameSuffix}</functionNameSuffix>
+                    <environmentVariables>
+                        <key0>value0</key0>
+                    </environmentVariables>
+                    <clientConfiguration>
+                        <protocol>https</protocol>
+                        <proxyHost>proxy-host.net</proxyHost>
+                        <proxyPort>1234</proxyPort>
+                    </clientConfiguration>
+                    <lambdaFunctionsJSON>
+                        [
+                        {
+                        "functionName": "my-function-name-0",
+                        "description": "I am awesome function",
+                        "handler": "no.flowlab.lambda0::test",
+                        "timeout": 30,
+                        "memorySize": 512,
+                        "keepAlive": 15,
+                        "triggers": [
+                        {
+                        "integration": "CloudWatch Events - Schedule",
+                        "ruleName": "every-minute",
+                        "ruleDescription": "foo bar",
+                        "scheduleExpression": "rate(1 minute)"
+                        },
+                        {
+                        "integration": "DynamoDB",
+                        "dynamoDBTable": "myTable",
+                        "batchSize": 100,
+                        "startingPosition": "TRIM_HORIZON"
+                        },
+                        {
+                        "integration": "Kinesis",
+                        "kinesisStream": "myStream",
+                        "batchSize": 100,
+                        "startingPosition": "TRIM_HORIZON"
+                        },
+                        {
+                        "integration": "SNS",
+                        "SNSTopic": "SNSTopic-1"
+                        },
+                        {
+                        "integration": "SNS",
+                        "SNSTopic": "SNSTopic-2"
+                        },
+                        {
+                        "integration": "Alexa Skills Kit"
+                        },
+                        {
+                        "integration": "Lex",
+                        "lexBotName": "BookCar"
+                        }
+                        ],
+                        "environmentVariables": {
+                        "key1": "value1",
+                        "key2": "value2"
+                        }
+                        },
+                        {
+                        "functionName": "my-function-name-1",
+                        "description": "I am awesome function too",
+                        "handler": "no.flowlab.lambda1"
+                        }
+                        ]
+                    </lambdaFunctionsJSON>
+                </configuration>
+            </plugin>-->
+
         </plugins>
     </build>
 

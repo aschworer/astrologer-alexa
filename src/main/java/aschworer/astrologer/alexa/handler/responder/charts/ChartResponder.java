@@ -6,6 +6,7 @@ import lombok.*;
 import org.slf4j.*;
 
 import java.time.*;
+import java.time.format.*;
 import java.util.*;
 
 import static aschworer.astrologer.alexa.handler.responder.charts.AlexaDateTimeUtil.*;
@@ -27,6 +28,10 @@ public class ChartResponder extends AstrologerResponder {
         }
     }
 
+    public static void main(String[] args) {
+        System.out.println(LocalTime.of(9, 0).format(DateTimeFormatter.ofPattern("hh.mm a")));
+    }
+
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {
@@ -44,7 +49,7 @@ public class ChartResponder extends AstrologerResponder {
                 return askForBirthTime();
             } else if (!SessionDetails.UNKNOWN.equalsIgnoreCase(time)) {
                 parsedTime = parseTime(time);
-                born = born + " at " + time;
+                born = born + " at " + parsedTime.format(DateTimeFormatter.ofPattern("hh.mm a"));
             }
 
             //birth place
