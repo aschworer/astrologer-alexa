@@ -28,10 +28,6 @@ public class ChartResponder extends AstrologerResponder {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(LocalTime.of(9, 0).format(DateTimeFormatter.ofPattern("hh.mm a")));
-    }
-
     @Override
     public SpeechletResponse respondToInitialIntent(SessionDetails session) {
         try {

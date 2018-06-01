@@ -210,6 +210,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn(DATE_20_04_1987);
         Mockito.when(session.getAttribute(BIRTH_DATE_CONFIRMED)).thenReturn(Boolean.TRUE);
         Mockito.when(session.getAttribute(BIRTH_TIME)).thenReturn("EV");
+        Mockito.when(session.getAttribute(BIRTH_TIMEZONE_OFFSET)).thenReturn("+03:00");
         Mockito.when(session.getAttribute(BIRTH_PLACE)).thenReturn(place);
         Mockito.when(session.getAttribute(BIRTH_PLACE_CONFIRMED)).thenReturn(Boolean.TRUE);
         Mockito.when(session.getAttribute(BIRTH_LAT)).thenReturn("+33.33");
