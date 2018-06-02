@@ -9,15 +9,25 @@ public class AlexaDateTimeUtil {
     private static final DateTimeFormatter ALEXA_TIME_FORMATTER = DateTimeFormatter.ISO_TIME.withResolverStyle(ResolverStyle.STRICT);
     private static final DateTimeFormatter ALEXA_TIME_FORMATTER2 = DateTimeFormatter.ofPattern("HHmm").withResolverStyle(ResolverStyle.STRICT);
 
-    public static LocalDate parseDate(String date) throws AlexaDateException {
+    public static LocalDate parseDate(String date) throws AlexaDateTimeException {
+        LocalDate parsedDate;
         try {
-            return LocalDate.parse(date, ALEXA_DATE_FORMATTER);
+            parsedDate = LocalDate.parse(date, ALEXA_DATE_FORMATTER);
         } catch (Exception e) {
-            throw new AlexaDateException();
+            throw new AlexaDateTimeException(SpokenCards.INVALID_DATE);
         }
+        if (parsedDate.getYear() < 1550 || parsedDate.getYear() > 2649) {
+            throw new AlexaDateTimeException(SpokenCards.INVALID_DATE_RANGE);
+        }
+        return parsedDate;
     }
 
-    static LocalTime parseTime(String time) throws AlexaTimeException {
+    public static void main(String[] args) {
+        LocalDate parsedDate = LocalDate.parse("1011-11-20", ALEXA_DATE_FORMATTER);
+        System.out.println(parsedDate);
+    }
+
+    static LocalTime parseTime(String time) throws AlexaDateTimeException {
         try {
             LocalTime parsedTime;
             if ("EV".equalsIgnoreCase(time)) {
@@ -37,7 +47,7 @@ public class AlexaDateTimeUtil {
             try {
                 return LocalTime.parse(time, ALEXA_TIME_FORMATTER2);
             } catch (Exception ex) {
-                throw new AlexaTimeException();
+                throw new AlexaDateTimeException(SpokenCards.INVALID_TIME);
             }
         }
     }

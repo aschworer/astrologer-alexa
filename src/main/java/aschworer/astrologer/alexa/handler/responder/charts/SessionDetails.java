@@ -49,16 +49,32 @@ public class SessionDetails {
         return (String) session.getAttribute(LAST_TELLME_SPEECH);
     }
 
+    public void setLastTellMeSpeech(String lastTellMeSpeech) {
+        session.setAttribute(LAST_TELLME_SPEECH, lastTellMeSpeech);
+    }
+
     public String getLastTellMeCard() {
         return (String) session.getAttribute(LAST_TELLME_CARD);
+    }
+
+    public void setLastTellMeCard(String lastTellMeCard) {
+        session.setAttribute(LAST_TELLME_CARD, lastTellMeCard);
     }
 
     public String getLastSpokenCard() {
         return (String) session.getAttribute(LAST_SPOKEN_CARD);
     }
 
+    public void setLastSpokenCard(String lastSpokenCard) {
+        session.setAttribute(LAST_SPOKEN_CARD, lastSpokenCard);
+    }
+
     public String getLastSpokenSpeech() {
         return (String) session.getAttribute(LAST_SPOKEN_SPEECH);
+    }
+
+    public void setLastSpokenSpeech(String lastSpokenSpeech) {
+        session.setAttribute(LAST_SPOKEN_SPEECH, lastSpokenSpeech);
     }
 
     public String getBirthTimeZoneOffset() {
@@ -78,11 +94,11 @@ public class SessionDetails {
     }
 
     public boolean isAskingForBirthYear() {
-        return SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
+        return SpokenCards.WHATS_BIRTH_YEAR.equals(session.getAttribute(LAST_SPOKEN_CARD));
     }
 
     public boolean isAskingForBirthDay() {
-        return SpokenCards.TELL_ME_BIRTH_DAY.equals(session.getAttribute(LAST_TELLME_CARD)) || SpokenCards.TELL_ME_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
+        return SpokenCards.TELL_ME_BIRTH_DAY.equals(session.getAttribute(LAST_TELLME_CARD)) || SpokenCards.WHATS_BIRTH_YEAR.equals(session.getAttribute(LAST_TELLME_CARD));
     }
 
     public String getBirthDate() {

@@ -88,7 +88,7 @@ public abstract class Speaker {
         return natalChartSpeech.toString();
     }
 
-    protected String formatNoYear(String date) throws AlexaDateException {
+    protected String formatNoYear(String date) throws AlexaDateTimeException {
         return DateTimeFormatter.ofPattern("dd MMMM").format(AlexaDateTimeUtil.parseDate(date));
     }
 

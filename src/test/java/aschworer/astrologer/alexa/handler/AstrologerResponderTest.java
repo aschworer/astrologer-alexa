@@ -147,7 +147,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_DAY);
         final SpeechletResponse response = astrologerResponder.respondToIntent(buildIntentWithSlots(BIRTH_DAY_INTENT.getName(), buildSlotsMap("day", date)), session);
         Mockito.verify(session).setAttribute(BIRTH_DATE, date);
-        assertEquals(TELL_ME_BIRTH_YEAR, response.getCard().getTitle());
+        assertEquals(WHATS_BIRTH_YEAR, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
     }
 
@@ -166,7 +166,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     public void testBirthYearIntent() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("2015-11-20");
-        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WHATS_BIRTH_YEAR);
         final SpeechletResponse response = astrologerResponder.respondToIntent(BIRTH_YEAR_INTENT_1986, session);
         assertEquals(DOUBLE_CHECK_DATE, response.getCard().getTitle());
         assertFalse(response.getNullableShouldEndSession());
@@ -414,7 +414,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     @Test
     public void testChartBirthYearNotGiven() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(FULL_CHART_INTENT.getName());
-        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(WHATS_BIRTH_YEAR);
         SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
         assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());
         assertTrue(response.getNullableShouldEndSession());
@@ -425,7 +425,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(SUN_SIGN_INTENT.getName());
         Mockito.when(session.getAttribute(BIRTH_DATE)).thenReturn("1985-11-29");
         Mockito.when(session.getAttribute(BIRTH_DATE_CONFIRMED)).thenReturn(Boolean.TRUE);
-        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(LAST_SPOKEN_CARD)).thenReturn(WHATS_BIRTH_YEAR);
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.SUN.getString());
         SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
         assertEquals(SPEAK_PLANET_SIGN, response.getCard().getTitle());
@@ -436,7 +436,7 @@ public class AstrologerResponderTest extends AlexaResponderTest {
     @Test
     public void testPlanetMoonSignBirthYearNotGiven() {
         Mockito.when(session.getAttribute(INITIAL_INTENT)).thenReturn(PLANET_SIGN_INTENT.getName());
-        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(TELL_ME_BIRTH_YEAR);
+        Mockito.when(session.getAttribute(LAST_TELLME_CARD)).thenReturn(WHATS_BIRTH_YEAR);
         Mockito.when(session.getAttribute(PLANET)).thenReturn(Planet.MOON.getString());
         SpeechletResponse response = astrologerResponder.respondToIntent(I_DONT_KNOW_INTENT, session);
         assertEquals(MORE_DATA_REQUIRED, response.getCard().getTitle());

@@ -28,10 +28,9 @@ public class AlexaResponder extends Speaker {
         }
     }
 
-    SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
+    private SpeechletResponse respondToCustomIntent(Intent intent, Session session) {
         log.info(intent.getName());
         SessionDetails sessionDetails = new SessionDetails(session);
-
         AstrologerIntent currentIntent = AstrologerIntent.getByName(intent.getName());
         AstrologerIntent initialIntent = AstrologerIntent.getByName(sessionDetails.getInitialIntent().getName());
         if (SUN_SIGN_INTENT.equals(currentIntent) || SUN_SIGN_INTENT.equals(initialIntent)) {

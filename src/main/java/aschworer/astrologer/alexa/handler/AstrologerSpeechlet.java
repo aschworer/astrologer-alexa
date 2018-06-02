@@ -17,34 +17,50 @@ public class AstrologerSpeechlet implements SpeechletV2 {
 
     private AlexaResponder alexaResponder = new AlexaResponder();
 
+    private static String intentToString(Intent intent) {
+        StringBuilder intentStr = new StringBuilder(intent.getName());
+        intentStr.append(" (");
+        for (String slotKey : intent.getSlots().keySet()) {
+            intentStr.append(slotKey).append(": ").append(intent.getSlot(slotKey).getValue()).append("; ");
+        }
+        return intentStr.append(") ").toString();
+    }
+
     @Override
     public void onSessionStarted(SpeechletRequestEnvelope<SessionStartedRequest> requestEnvelope) {
-        log.info("onSessionStarted requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onSessionStarted locale={} requestId={}, sessionId={}",
+                requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId(), requestEnvelope.getRequest().getLocale());
     }
 
     @Override
     public SpeechletResponse onLaunch(SpeechletRequestEnvelope<LaunchRequest> requestEnvelope) {
-//        log.info("onLaunch requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onLaunch locale={} requestId={}, sessionId={}",
+                requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId(), requestEnvelope.getRequest().getLocale());
         SpeechletResponse greet = alexaResponder.greet();
-
-        requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_CARD, greet.getCard().getTitle());
-        requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_SPEECH, ((SimpleCard)greet.getCard()).getContent());
-
+        SessionDetails sessionDetails = new SessionDetails(requestEnvelope.getSession());
+        sessionDetails.setLastSpokenCard(greet.getCard().getTitle());
+        sessionDetails.setLastSpokenSpeech(((SimpleCard) greet.getCard()).getContent());
         return greet;
     }
 
     @Override
     public SpeechletResponse onIntent(SpeechletRequestEnvelope<IntentRequest> requestEnvelope) {
         Intent intent = requestEnvelope.getRequest().getIntent();
-//        log.info("onIntent requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onIntent locale={} requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId(), requestEnvelope.getRequest().getLocale());
+        log.info("Intent {}", intentToString(intent));
+        SessionDetails sessionDetails = new SessionDetails(requestEnvelope.getSession());
+        log.info("Session on request - " + sessionDetails);
         try {
             SpeechletResponse speechletResponse = alexaResponder.respondToIntent(intent, requestEnvelope.getSession());
-            requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_CARD, speechletResponse.getCard().getTitle());
-            requestEnvelope.getSession().setAttribute(SessionDetails.LAST_SPOKEN_SPEECH, ((SimpleCard)speechletResponse.getCard()).getContent());
-            if (speechletResponse.getCard().getTitle().startsWith("TellMe")) {
-                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_TELLME_CARD, speechletResponse.getCard().getTitle());
-                requestEnvelope.getSession().setAttribute(SessionDetails.LAST_TELLME_SPEECH, ((SimpleCard)speechletResponse.getCard()).getContent());
+            String responseCardTitle = speechletResponse.getCard().getTitle();
+            String responseSpeech = ((SimpleCard) speechletResponse.getCard()).getContent();
+            sessionDetails.setLastSpokenCard(responseCardTitle);
+            sessionDetails.setLastSpokenSpeech(responseSpeech);
+            if (responseCardTitle.startsWith("TellMe")) {
+                sessionDetails.setLastTellMeCard(responseCardTitle);
+                sessionDetails.setLastTellMeSpeech(responseSpeech);
             }
+            log.info("Session on response - " + sessionDetails);
             return speechletResponse;
         } catch (Exception e) {
             log.error("Exception: ", e);
@@ -54,6 +70,7 @@ public class AstrologerSpeechlet implements SpeechletV2 {
 
     @Override
     public void onSessionEnded(SpeechletRequestEnvelope<SessionEndedRequest> requestEnvelope) {
-        log.info("onSessionEnded requestId={}, sessionId={}", requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId());
+        log.info("onSessionEnded locale={} requestId={}, sessionId={}",
+                requestEnvelope.getRequest().getRequestId(), requestEnvelope.getSession().getSessionId(), requestEnvelope.getRequest().getLocale());
     }
 }

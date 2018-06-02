@@ -62,12 +62,9 @@ public class ChartResponder extends AstrologerResponder {
                             service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset()),
                             getMissingInfoPhrase(session.getFullBirthPlace(), time)
                     ));
-        } catch (AlexaDateException e) {
-            log.error("Date parse problem", e);
-            return repeatedSpeech(INVALID_DATE);
-        } catch (AlexaTimeException e) {
-            log.error("Time parse problem", e);
-            return repeatedSpeech(INVALID_TIME);
+        } catch (AlexaDateTimeException e) {
+            log.error("Date/Time parse problem", e);
+            return repeatedSpeech(e.getSpokenCard());
         } catch (Exception e) {
             log.error("error", e);
             return speakAndFinish(CHART_ERROR);

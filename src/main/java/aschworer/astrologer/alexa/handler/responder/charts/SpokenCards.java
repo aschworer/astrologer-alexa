@@ -12,7 +12,7 @@ public interface SpokenCards {
 
     String TELL_ME_BIRTH_DAY = "TellMeBirthday";
     String TELL_ME_BIRTH_TIME = "TellMeTimeOfBirth";
-    String TELL_ME_BIRTH_YEAR = "TellMeBirthYear";
+    String WHATS_BIRTH_YEAR = "WhatsBirthYear";
     String TELL_ME_BIRTH_PLACE = "TellMePlaceOfBirth";
 
     String DOUBLE_CHECK_DATE = "DoubleCheckDate";
@@ -24,5 +24,6 @@ public interface SpokenCards {
     String MORE_DATA_REQUIRED = "MoreDataRequired";
     String CHART_ERROR = "NatalChartError";
     String INVALID_DATE = "InvalidDate";
+    String INVALID_DATE_RANGE = "InvalidDateRange";
     String INVALID_TIME = "InvalidTime";
 }
