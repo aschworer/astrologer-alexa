@@ -191,7 +191,7 @@ public class SessionDetails {
                 "b-year: " + getBirthYear() + "\n" +
                 "b-time: " + getBirthTime() + "\n" +
                 "b-place: " + getBirthPlace() + "\n" +
-                "b-place confirmed: " + isBirthDateConfirmed() + "\n" +
+                "b-place confirmed: " + isBirthPlaceConfirmed() + "\n" +
                 "full b-place: " + getFullBirthPlace() + "\n" +
                 "lat: " + getBirthLat() + "\n" +
                 "lng: " + getBirthLng() + "\n" +

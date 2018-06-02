@@ -60,7 +60,7 @@ public class ChartResponder extends AstrologerResponder {
             return speakAndFinish(SpokenCards.SPEAK_NATAL_CHART, born,
                     getNatalChartAsSpeech(
                             service.getNatalChart(parsedDate, parsedTime, session.getBirthLat(), session.getBirthLng(), session.getBirthTimeZoneOffset()),
-                            getMissingInfoPhrase(session.getFullBirthPlace(), time)
+                            getMissingInfoPhrase(place, time)
                     ));
         } catch (AlexaDateTimeException e) {
             log.error("Date/Time parse problem", e);
