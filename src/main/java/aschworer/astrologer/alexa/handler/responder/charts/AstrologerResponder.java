@@ -22,16 +22,15 @@ public abstract class AstrologerResponder extends Speaker {
     public abstract SpeechletResponse respondToInitialIntent(SessionDetails session);
 
     public SpeechletResponse handle(Intent intent, SessionDetails session) {
-        log.info(intent.getName());
         switch (AstrologerIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
-                if (SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
                     return askForBirthDate();
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case FULL_CHART_INTENT:
-                if (SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
                     return askForBirthDate();
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
@@ -39,7 +38,7 @@ public abstract class AstrologerResponder extends Speaker {
             case PLANET_SIGN_INTENT:
                 String planet = intent.getSlot("planet").getValue();
                 log.info("planet input: " + planet);
-                if (SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
                     session.setPlanet(planet);
                     return askForBirthDate();
                 } else {

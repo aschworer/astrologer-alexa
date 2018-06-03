@@ -55,6 +55,9 @@ public abstract class Speaker {
         SsmlOutputSpeech speech = new SsmlOutputSpeech();
         speech.setSsml("<speak>" + speechText + "</speak>");
         log.info("return speech " + speechText);
+        if (speechText == null) {
+            return repeatedSpeech(SpokenCards.WELCOME);
+        }
         if (end) {
             return SpeechletResponse.newTellResponse(speech, card);
         } else {

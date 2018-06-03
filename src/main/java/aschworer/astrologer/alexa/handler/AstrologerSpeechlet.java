@@ -56,7 +56,7 @@ public class AstrologerSpeechlet implements SpeechletV2 {
             String responseSpeech = ((SimpleCard) speechletResponse.getCard()).getContent();
             sessionDetails.setLastSpokenCard(responseCardTitle);
             sessionDetails.setLastSpokenSpeech(responseSpeech);
-            if (responseCardTitle.startsWith("TellMe")) {
+            if (responseCardTitle != null && responseCardTitle.startsWith("TellMe")) {
                 sessionDetails.setLastTellMeCard(responseCardTitle);
                 sessionDetails.setLastTellMeSpeech(responseSpeech);
             }
