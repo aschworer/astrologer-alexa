@@ -15,7 +15,6 @@ import static aschworer.astrologer.alexa.handler.responder.charts.SpokenCards.*;
  */
 public abstract class AstrologerResponder extends Speaker {
 
-    static final String SAY_AS_DATE = "<say-as interpret-as=\"date\">%s</say-as>";
     private static final Logger log = LoggerFactory.getLogger(AstrologerResponder.class);
     private GoogleLocationService locationService = new GoogleLocationService();
 
@@ -24,13 +23,13 @@ public abstract class AstrologerResponder extends Speaker {
     public SpeechletResponse handle(Intent intent, SessionDetails session) {
         switch (AstrologerIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
-                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (isStartOfConversation(session)) {
                     return askForBirthDate();
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
                 }
             case FULL_CHART_INTENT:
-                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (isStartOfConversation(session)) {
                     return askForBirthDate();
                 } else {
                     return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
@@ -38,7 +37,7 @@ public abstract class AstrologerResponder extends Speaker {
             case PLANET_SIGN_INTENT:
                 String planet = intent.getSlot("planet").getValue();
                 log.info("planet input: " + planet);
-                if (session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard())) {
+                if (isStartOfConversation(session)) {
                     session.setPlanet(planet);
                     return askForBirthDate();
                 } else {
@@ -126,6 +125,11 @@ public abstract class AstrologerResponder extends Speaker {
         }
     }
 
+    boolean isStartOfConversation(SessionDetails session) {
+        return session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard()) ||
+                SpokenCards.HELP.equalsIgnoreCase(session.getLastSpokenCard());
+    }
+
     /**
      * if the year in the date comes as current year or next year, then 2 options
      * user didnt mention any year. in this case need to ask
@@ -169,7 +173,7 @@ public abstract class AstrologerResponder extends Speaker {
      * ELSE goto get a year (replace 2015 with new one if present), and then confirm
      */
     SpeechletResponse confirmBirthDate(SessionDetails session) {
-        return ask(DOUBLE_CHECK_DATE, String.format(SAY_AS_DATE, session.getBirthDate()));
+        return ask(DOUBLE_CHECK_DATE, session.getBirthDate());
     }
 
     private SpeechletResponse askForBirthYear() {

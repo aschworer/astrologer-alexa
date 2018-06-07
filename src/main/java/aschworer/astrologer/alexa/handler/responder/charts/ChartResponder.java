@@ -36,7 +36,7 @@ public class ChartResponder extends AstrologerResponder {
                 return askForBirthDate();
             }
             LocalDate parsedDate = parseDate(session.getBirthDate());
-            String born = String.format(SAY_AS_DATE, session.getBirthDate());
+            String born = session.getBirthDate();
 
             //birth time
             String time = session.getBirthTime();

@@ -6,8 +6,9 @@ package aschworer.astrologer.alexa.handler.responder.charts;
 public interface SpokenCards {
 
     String WELCOME = "Welcome";
-    String CANCEL = "Cancel";
     String HELP = "Help";
+    //session end
+    String CANCEL = "Cancel";
     String STOP = "Stop";
 
     String TELL_ME_BIRTH_DAY = "TellMeBirthday";

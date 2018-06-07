@@ -31,7 +31,7 @@ public class PlanetInSignResponder extends ChartResponder {
             String date = session.getBirthDate();
             LocalDate parsedDate = parseDate(session.getBirthDate());
             if (withinAYearFromNow(parsedDate)) date = formatNoYear(date);
-            String born = String.format(SAY_AS_DATE, date);
+            String born = date;
 
             //birth time
             String time = session.getBirthTime();

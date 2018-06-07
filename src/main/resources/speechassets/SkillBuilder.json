@@ -1,19 +1,27 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "astrologer",
+      "invocationName": "natal charts",
       "intents": [
         {
           "name": "AMAZON.CancelIntent",
-          "samples": []
+          "samples": [
+            "cancel"
+          ]
         },
         {
           "name": "AMAZON.HelpIntent",
-          "samples": []
+          "samples": [
+            "help",
+            "I don't understand",
+            "what"
+          ]
         },
         {
           "name": "AMAZON.StopIntent",
-          "samples": []
+          "samples": [
+            "stop"
+          ]
         },
         {
           "name": "AMAZON.YesIntent",
@@ -122,7 +130,7 @@
           "slots": [
             {
               "name": "city",
-              "type": "AMAZON.US_CITY"
+              "type": "AMAZON.City"
             },
             {
               "name": "country",
