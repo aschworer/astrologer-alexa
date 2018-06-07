@@ -181,6 +181,21 @@ public class SessionDetails {
         session.setAttribute(BIRTH_LNG, lng);
     }
 
+    public void clearUserInput(){
+        session.removeAttribute(BIRTH_PLACE_FULLNAME);
+        session.removeAttribute(BIRTH_DATE);
+        session.removeAttribute(BIRTH_YEAR);
+        session.removeAttribute(BIRTH_PLACE);
+        session.removeAttribute(BIRTH_LAT);
+        session.removeAttribute(BIRTH_LNG);
+        session.removeAttribute(BIRTH_TIMEZONE_OFFSET);
+        session.removeAttribute(BIRTH_TIME);
+        session.removeAttribute(PLANET);
+        session.removeAttribute(BIRTH_DATE_CONFIRMED);
+        session.removeAttribute(BIRTH_PLACE_CONFIRMED);
+        session.removeAttribute(LAST_TELLME_CARD);
+    }
+
     @Override
     public String toString() {
         return "Session: \n" + "intent: " + getInitialIntent() + "\n" +

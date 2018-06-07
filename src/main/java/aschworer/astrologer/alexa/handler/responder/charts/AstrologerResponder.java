@@ -2,6 +2,7 @@ package aschworer.astrologer.alexa.handler.responder.charts;
 
 import aschworer.astrologer.alexa.handler.responder.*;
 import aschworer.astrologer.alexa.service.locationservice.*;
+import aschworer.astrologer.model.*;
 import com.amazon.speech.slu.*;
 import com.amazon.speech.speechlet.*;
 import org.slf4j.*;
@@ -23,26 +24,20 @@ public abstract class AstrologerResponder extends Speaker {
     public SpeechletResponse handle(Intent intent, SessionDetails session) {
         switch (AstrologerIntent.getByName(intent.getName())) {
             case SUN_SIGN_INTENT:
-                if (isStartOfConversation(session)) {
-                    return askForBirthDate();
-                } else {
-                    return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
-                }
+                session.clearUserInput();
+                return askForBirthDate();
             case FULL_CHART_INTENT:
-                if (isStartOfConversation(session)) {
-                    return askForBirthDate();
-                } else {
-                    return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
-                }
+                session.clearUserInput();
+                return askForBirthDate();
             case PLANET_SIGN_INTENT:
                 String planet = intent.getSlot("planet").getValue();
                 log.info("planet input: " + planet);
-                if (isStartOfConversation(session)) {
-                    session.setPlanet(planet);
-                    return askForBirthDate();
-                } else {
-                    return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
+                if (Planet.getByString(planet) == null) {
+                    return repeatedSpeech(SpokenCards.HELP);
                 }
+                session.clearUserInput();
+                session.setPlanet(planet);
+                return askForBirthDate();
             case BIRTH_DAY_INTENT:
                 String day = intent.getSlot("day").getValue();
                 log.info("birth day input: " + day);
@@ -123,11 +118,6 @@ public abstract class AstrologerResponder extends Speaker {
                 //repeat last said
                 return repeat(session.getLastSpokenCard(), session.getLastSpokenSpeech());
         }
-    }
-
-    boolean isStartOfConversation(SessionDetails session) {
-        return session.getLastSpokenCard() == null || SpokenCards.WELCOME.equalsIgnoreCase(session.getLastSpokenCard()) ||
-                SpokenCards.HELP.equalsIgnoreCase(session.getLastSpokenCard());
     }
 
     /**

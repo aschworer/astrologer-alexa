@@ -14,9 +14,10 @@ import java.util.*;
  * @author aschworer
  */
 public abstract class Speaker {
-//    public static final String LETS_TRY_AGAIN_PREFIX = "Hmm, not sure. Let's try that again. ";
+    //    public static final String LETS_TRY_AGAIN_PREFIX = "Hmm, not sure. Let's try that again. ";
 
     private static final Logger log = LoggerFactory.getLogger(Speaker.class);
+    public static final String I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN = "I didn't catch that. Let's try again. ";
     static String[] suffixes =
             //    0     1     2     3     4     5     6     7     8     9
             {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
@@ -45,7 +46,7 @@ public abstract class Speaker {
     }
 
     protected SpeechletResponse repeat(String cardName, String lastSaid) {
-        return speak(cardName, lastSaid, false);
+        return speak(cardName, I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN + lastSaid, false);
     }
 
     private SpeechletResponse speak(String cardName, String speechText, boolean end) {

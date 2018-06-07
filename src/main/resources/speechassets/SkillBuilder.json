@@ -81,6 +81,7 @@
             "give me a {planet} sign",
             "get {planet} sign",
             "{planet} sign",
+            "{planet}",
             "sign of {planet}"
           ]
         },
