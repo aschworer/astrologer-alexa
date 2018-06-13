@@ -27,6 +27,8 @@
           "name": "AMAZON.YesIntent",
           "samples": [
             "yes",
+            "es",
+            "yes yes",
             "yeah",
             "yep",
             "yup",
@@ -81,7 +83,6 @@
             "give me a {planet} sign",
             "get {planet} sign",
             "{planet} sign",
-            "{planet}",
             "sign of {planet}"
           ]
         },
@@ -131,7 +132,7 @@
           "slots": [
             {
               "name": "city",
-              "type": "AMAZON.City"
+              "type": "AMAZON.US_CITY"
             },
             {
               "name": "country",

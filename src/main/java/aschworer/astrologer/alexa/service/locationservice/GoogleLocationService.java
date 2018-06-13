@@ -44,11 +44,11 @@ public class GoogleLocationService {
         GeocodingResult[] results = GeocodingApi.geocode(context, locationName).await();
         List<Location> list = new ArrayList<>();
         for (GeocodingResult place : results) {
-            String latitude = String.valueOf(place.geometry.location.lat);
-            String longitude = String.valueOf(place.geometry.location.lng);
-            TimeZone timezone = getTimezone(Double.parseDouble(latitude), Double.parseDouble(longitude));
             for (AddressComponentType addressComponentType : place.addressComponents[0].types) {
                 if (addressComponentType == AddressComponentType.COUNTRY || addressComponentType == AddressComponentType.LOCALITY) {
+                    String latitude = String.valueOf(place.geometry.location.lat);
+                    String longitude = String.valueOf(place.geometry.location.lng);
+                    TimeZone timezone = getTimezone(Double.parseDouble(latitude), Double.parseDouble(longitude));
                     list.add(new Location(latitude, longitude, getFullName(place), getGMTOffset(timezone), timezone.getDisplayName()));
                 }
             }

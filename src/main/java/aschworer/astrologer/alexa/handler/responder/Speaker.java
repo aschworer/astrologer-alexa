@@ -46,6 +46,9 @@ public abstract class Speaker {
     }
 
     protected SpeechletResponse repeat(String cardName, String lastSaid) {
+        if (lastSaid == null) {
+            return repeatedSpeech(SpokenCards.WELCOME);
+        }
         return speak(cardName, I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN + lastSaid, false);
     }
 
@@ -56,9 +59,6 @@ public abstract class Speaker {
         SsmlOutputSpeech speech = new SsmlOutputSpeech();
         speech.setSsml("<speak>" + speechText + "</speak>");
         log.info("return speech " + speechText);
-        if (speechText == null) {
-            return repeatedSpeech(SpokenCards.WELCOME);
-        }
         if (end) {
             return SpeechletResponse.newTellResponse(speech, card);
         } else {
