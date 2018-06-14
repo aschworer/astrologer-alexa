@@ -16,17 +16,8 @@ import java.util.*;
 public abstract class Speaker {
     //    public static final String LETS_TRY_AGAIN_PREFIX = "Hmm, not sure. Let's try that again. ";
 
-    private static final Logger log = LoggerFactory.getLogger(Speaker.class);
     public static final String I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN = "I didn't catch that. Let's try again. ";
-    static String[] suffixes =
-            //    0     1     2     3     4     5     6     7     8     9
-            {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
-                    //    10    11    12    13    14    15    16    17    18    19
-                    "th", "th", "th", "th", "th", "th", "th", "th", "th", "th",
-                    //    20    21    22    23    24    25    26    27    28    29
-                    "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
-                    //    30    31
-                    "th", "st"};
+    private static final Logger log = LoggerFactory.getLogger(Speaker.class);
     private ResourceBundle messages = ResourceBundle.getBundle("messages");
 
     protected SpeechletResponse ask(String cardName, String... args) {
@@ -46,9 +37,6 @@ public abstract class Speaker {
     }
 
     protected SpeechletResponse repeat(String cardName, String lastSaid) {
-        if (lastSaid == null) {
-            return repeatedSpeech(SpokenCards.WELCOME);
-        }
         return speak(cardName, I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN + lastSaid, false);
     }
 
@@ -59,6 +47,9 @@ public abstract class Speaker {
         SsmlOutputSpeech speech = new SsmlOutputSpeech();
         speech.setSsml("<speak>" + speechText + "</speak>");
         log.info("return speech " + speechText);
+        if (speechText == null) {
+            return repeatedSpeech(SpokenCards.WELCOME);
+        }
         if (end) {
             return SpeechletResponse.newTellResponse(speech, card);
         } else {
