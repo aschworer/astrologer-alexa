@@ -14,7 +14,6 @@ import java.util.*;
  * @author aschworer
  */
 public abstract class Speaker {
-    //    public static final String LETS_TRY_AGAIN_PREFIX = "Hmm, not sure. Let's try that again. ";
 
     public static final String I_DIDN_T_CATCH_THAT_LET_S_TRY_AGAIN = "I didn't catch that. Let's try again. ";
     private static final Logger log = LoggerFactory.getLogger(Speaker.class);
@@ -73,9 +72,7 @@ public abstract class Speaker {
             }
         }
 
-        if (planetWithMultipleSigns.length() == 2) {
-            natalChartSpeech.append(planetWithMultipleSigns).append(" require ").append(missingInfoPhrase);
-        } else if (planetWithMultipleSigns.length() > 2) {
+        if (!natalChartSpeech.toString().toUpperCase().contains("HOUSE")) {
             natalChartSpeech.append("Planets that are not mentioned require ").append(missingInfoPhrase)
                     .append(". Those include ").append(planetWithMultipleSigns)
                     .append(" Ascendant, Midheaven and the other houses.");
